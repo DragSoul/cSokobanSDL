@@ -1,29 +1,19 @@
 #include "sokoban.h"
 
 int main(int argc, char ** argv){
-    imgperso = SDL_LoadBMP("images/joseph_pixel.bmp");
-    imgcaisse1 = SDL_LoadBMP("images/caisse.bmp");
-    imgcaisse2 = SDL_LoadBMP("images/caissesombre.bmp");
-    imgsol = SDL_LoadBMP("images/sol.bmp");
-    imgdest = SDL_LoadBMP("images/solcible.bmp");
-    imgmur = SDL_LoadBMP("images/mur.bmp");
-    if(imgperso == NULL || imgcaisse1 == NULL ||imgcaisse2 == NULL ||imgsol == NULL ||imgdest == NULL ||imgmur == NULL){
-        printf("pas trouvé img\n");
-        exit(1);
-    }
+    loadImg();
     srand(time(NULL));
-    positionperso.x=(WIDTH/2)-(LC/2);
-    positionperso.y=(HEIGHT/2)-(LC/2);
+    tabNiveau = malloc(sizeof(char)*110);
     // Init
     if(SDL_Init(SDL_INIT_VIDEO) != 0){
         fprintf(stderr,"\nUnable to initialize SDL: %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }
-    if((ecran = SDL_SetVideoMode(WIDTH,HEIGHT,32, SDL_HWSURFACE)) == NULL){
-        fprintf(stderr,"Erreur VideoMode %s\n",SDL_GetError());
+    if((ecran = SDL_SetVideoMode(WIDTH, HEIGHT, 32, SDL_HWSURFACE)) == NULL){
+        fprintf(stderr, "Erreur VideoMode %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }
-    FILE *flot = fopen(argv[1], "r");
+    FILE *flot = fopen("niveau1", "r");
     if(flot == NULL){
         printf("pb ouverture fichier en lecture\n");
         exit(1);
@@ -37,17 +27,96 @@ int main(int argc, char ** argv){
     dessine();
     SDL_Flip(ecran);
     boucleEv();
-    // Quit
+
+
+    freeImg();
     SDL_Quit();
     fclose(flot);
     return EXIT_SUCCESS;
 }
 
+void loadImg(){
+    imgperso = SDL_LoadBMP("images/joseph_pixel.bmp");
+    imgcaisse1 = SDL_LoadBMP("images/caisse.bmp");
+    imgcaisse2 = SDL_LoadBMP("images/caissesombre.bmp");
+    imgsol = SDL_LoadBMP("images/sol.bmp");
+    imgdest = SDL_LoadBMP("images/solcible.bmp");
+    imgmur = SDL_LoadBMP("images/mur.bmp");
+    if(imgperso == NULL || imgcaisse1 == NULL ||imgcaisse2 == NULL ||imgsol == NULL ||imgdest == NULL ||imgmur == NULL){
+        printf("pas trouvé img\n");
+        exit(1);
+    }
+}
+
+void freeImg(){
+    SDL_FreeSurface(imgperso);
+    SDL_FreeSurface(imgcaisse1);
+    SDL_FreeSurface(imgcaisse2);
+    SDL_FreeSurface(imgsol);
+    SDL_FreeSurface(imgdest);
+    SDL_FreeSurface(imgmur);
+}
+
+//création d'un tableau pour avoir le niveau en mémoire
 void creationniveau1(FILE *flot){
-    SDL_FillRect(ecran, NULL, SDL_MapRGB(ecran->format, 0, 0, 0));
-    SDL_Flip(ecran);
     char c;
-    int i = 0;
+    int i = 0, j = 0;
+    SDL_Rect pos;
+    pos.x = 0;
+    pos.y = 0;
+    while((c = fgetc(flot)) != EOF){
+        switch(c){
+            case 's':
+                tabNiveau[i*N + j] = c;
+                j++;
+                SDL_BlitSurface(imgsol, NULL, ecran, &pos);
+                pos.x += LC;
+                break;
+            case '#':
+                tabNiveau[i*N + j] = c;
+                j++;
+                SDL_BlitSurface(imgmur, NULL, ecran, &pos);
+                pos.x += LC;
+                break;
+            case '$':
+                tabNiveau[i*N + j] = c;
+                j++;
+                SDL_BlitSurface(imgcaisse1, NULL, ecran, &pos);
+                pos.x += LC;
+                break;
+            case '*':
+                tabNiveau[i*N + j] = c;
+                j++;
+                SDL_BlitSurface(imgcaisse2, NULL, ecran, &pos);
+                pos.x += LC;
+                break;
+            case '.':
+                tabNiveau[i*N + j] = c;
+                j++;
+                SDL_BlitSurface(imgdest, NULL, ecran, &pos);
+                pos.x += LC;
+                break;
+            case '@':
+                tabNiveau[i*N + j] = c;
+                j++;
+                SDL_BlitSurface(imgperso, NULL, ecran, &pos);
+                positionperso = pos;
+                pos.x += LC;
+                break;
+            case '\n':
+                i++;
+                j = 0;
+                pos.x = 0;
+                pos.y += LC;
+                break;
+        }
+    }
+    SDL_Flip(ecran);
+}
+
+//création de niveau sans garder en mémoire
+/*void creationniveau1(FILE *flot){
+    char c;
     SDL_Rect pos;
     pos.x = 0;
     pos.y = 0;
@@ -85,10 +154,12 @@ void creationniveau1(FILE *flot){
         }
     }
     SDL_Flip(ecran);
-}
+}*/
 
 void boucleEv(){
     int cont = 1;
+    int i = positionperso.y/LC;
+    int j = positionperso.x/LC;
     SDL_Event event;
     while(cont){
         SDL_WaitEvent(&event);
@@ -98,38 +169,65 @@ void boucleEv(){
             case SDL_KEYDOWN:
                 switch(event.key.keysym.sym){
                     case SDLK_UP:
-                        if(positionperso.y >= LC){
-                            positionperso.y = positionperso.y-LC;
-                        }else{
-                            positionperso.y = 0;
+                        //caisse
+                        if(tabNiveau[(i-1)*N + j] == '#'){
+                            /* code */
                         }
-                        dessine();
+                        else{
+                            tabNiveau[i*N + j] = 's';
+                            i -= 1;
+                            tabNiveau[i*N + j] = '@';
+                            SDL_BlitSurface(imgsol, NULL, ecran, &positionperso);
+                            positionperso.y -= LC;
+                            dessine();
+                        }
                         break;
+
                     case SDLK_DOWN:
-                        if(positionperso.y+LC < HEIGHT-LC){
-                            positionperso.y += LC;
-                        }else{
-                            positionperso.y = HEIGHT-LC-1;
+                        //caisse
+                        if(tabNiveau[(i+1)*N + j] == '#'){
+                            /* code */
                         }
-                        dessine();
+                        else{
+                            tabNiveau[i*N + j] = 's';
+                            i += 1;
+                            tabNiveau[i*N + j] = '@';
+                            SDL_BlitSurface(imgsol, NULL, ecran, &positionperso);
+                            positionperso.y += LC;
+                            dessine();
+                        }
                         break;
 
                     case SDLK_LEFT:
-                        if(positionperso.x >= LC){
+                        //caisse
+                        if(tabNiveau[i*N + j-1] == '#'){
+                            /* code */
+                        }
+                        else{
+                            tabNiveau[i*N + j] = 's';
+                            j -= 1;
+                            tabNiveau[i*N + j] = '@';
+                            SDL_BlitSurface(imgsol, NULL, ecran, &positionperso);
                             positionperso.x -= LC;
-                        }else{
-                            positionperso.x = 0;
+                            dessine();
                         }
-                        dessine();
                         break;
+
                     case SDLK_RIGHT:
-                        if(positionperso.x+LC < WIDTH-LC){
-                            positionperso.x += LC;
-                        }else{
-                            positionperso.x = WIDTH-LC-1;
+                        //caisse
+                        if(tabNiveau[i*N + j+1] == '#'){
+                            /* code */
                         }
-                        dessine();
+                        else{
+                            tabNiveau[i*N + j] = 's';
+                            j += 1;
+                            tabNiveau[i*N + j] = '@';
+                            SDL_BlitSurface(imgsol, NULL, ecran, &positionperso);
+                            positionperso.x += LC;
+                            dessine();
+                        }
                         break;
+
                     case 'q':
                         cont = 0;
                         break;

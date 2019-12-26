@@ -4,6 +4,7 @@
 #define LC 50
 #define WIDTH 10*LC
 #define HEIGHT 11*LC
+#define N 11
 
 
 
@@ -14,6 +15,8 @@
 #include <SDL/SDL_types.h>
 
 
+void loadImg();
+void freeImg();
 void creationniveau1(FILE *flot);
 void boucleEv();
 void dessine();
@@ -27,6 +30,8 @@ SDL_Surface *imgsol;
 SDL_Surface *imgdest;
 
 SDL_Rect positionperso;
-SDL_Surface * ecran = NULL ;
+SDL_Surface * ecran = NULL;
+
+char *tabNiveau;
 
 #endif
