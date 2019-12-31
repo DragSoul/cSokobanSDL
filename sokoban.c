@@ -169,25 +169,26 @@ void boucleEv(){
             case SDL_KEYDOWN:
                 switch(event.key.keysym.sym){
                     case SDLK_UP:
-                        //caisse
+                        //y-1
                         move(&i,&j,0,-1);
                         break;
 
                     case SDLK_DOWN:
-                        //caisse
+                        //y+1
                         move(&i,&j,0,1);
                         break;
 
                     case SDLK_LEFT:
-                        //caisse
+                        //x-1
                         move(&i,&j,-1,0);
                         break;
 
                     case SDLK_RIGHT:
-                        //caisse
+                        //x+1
                         move(&i,&j,1,0);
                         break;
                     case 'r':
+                        //restart level
                         restart(1);
                         i = positionperso.y/LC;
                         j = positionperso.x/LC;
@@ -217,25 +218,28 @@ void move(int *i, int *j, int x, int y){
     SDL_Rect tmpcase;
     tmpcase.x = positionperso.x;
     tmpcase.y = positionperso.y;
-    //si caisse
-    if(tabNiveau[((*i)+y)*N + (*j)+x] == '$'){
-        //si sol après caisse
-        if(tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] == 's'){
-            tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] = '$';
-            tmpcase.x += x*LC*2;
-            tmpcase.y += y*LC*2;
-            SDL_BlitSurface(imgcaisse1, NULL, ecran, &tmpcase);
-            //déplacer le perso
-            moveperso(i,j,x,y);
-        }
-    }
+    
     if(tabNiveau[((*i)+y)*N + (*j)+x] == '#'){
 
     }
     // si sol 
-    if(tabNiveau[((*i)+y)*N + (*j)+x] == 's'){
-        //déplacer le perso
-        moveperso(i,j,x,y);
+    else{
+        //si caisse
+        if(tabNiveau[((*i)+y)*N + (*j)+x] == '$'){
+            //si sol après caisse
+            if(tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] == 's'){
+                tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] = '$';
+                tmpcase.x += x*LC*2;
+                tmpcase.y += y*LC*2;
+                SDL_BlitSurface(imgcaisse1, NULL, ecran, &tmpcase);
+                //déplacer le perso
+                moveperso(i,j,x,y);
+            }
+            //pas déplacer perso 2 fois 
+            return;
+        }
+            //déplacer le perso
+            moveperso(i,j,x,y);
     }
 }
 
