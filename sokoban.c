@@ -170,62 +170,27 @@ void boucleEv(){
                 switch(event.key.keysym.sym){
                     case SDLK_UP:
                         //caisse
-                        if(tabNiveau[(i-1)*N + j] == '#'){
-                            /* code */
-                        }
-                        else{
-                            tabNiveau[i*N + j] = 's';
-                            i -= 1;
-                            tabNiveau[i*N + j] = '@';
-                            SDL_BlitSurface(imgsol, NULL, ecran, &positionperso);
-                            positionperso.y -= LC;
-                            dessine();
-                        }
+                        move(&i,&j,0,-1);
                         break;
 
                     case SDLK_DOWN:
                         //caisse
-                        if(tabNiveau[(i+1)*N + j] == '#'){
-                            /* code */
-                        }
-                        else{
-                            tabNiveau[i*N + j] = 's';
-                            i += 1;
-                            tabNiveau[i*N + j] = '@';
-                            SDL_BlitSurface(imgsol, NULL, ecran, &positionperso);
-                            positionperso.y += LC;
-                            dessine();
-                        }
+                        move(&i,&j,0,1);
                         break;
 
                     case SDLK_LEFT:
                         //caisse
-                        if(tabNiveau[i*N + j-1] == '#'){
-                            /* code */
-                        }
-                        else{
-                            tabNiveau[i*N + j] = 's';
-                            j -= 1;
-                            tabNiveau[i*N + j] = '@';
-                            SDL_BlitSurface(imgsol, NULL, ecran, &positionperso);
-                            positionperso.x -= LC;
-                            dessine();
-                        }
+                        move(&i,&j,-1,0);
                         break;
 
                     case SDLK_RIGHT:
                         //caisse
-                        if(tabNiveau[i*N + j+1] == '#'){
-                            /* code */
-                        }
-                        else{
-                            tabNiveau[i*N + j] = 's';
-                            j += 1;
-                            tabNiveau[i*N + j] = '@';
-                            SDL_BlitSurface(imgsol, NULL, ecran, &positionperso);
-                            positionperso.x += LC;
-                            dessine();
-                        }
+                        move(&i,&j,1,0);
+                        break;
+                    case 'r':
+                        restart(1);
+                        i = positionperso.y/LC;
+                        j = positionperso.x/LC;
                         break;
 
                     case 'q':
@@ -236,6 +201,54 @@ void boucleEv(){
     }
 }
 
+void restart(int lv){
+    char filename[8];
+    sprintf(filename, "niveau%d", lv);
+    FILE *flot = fopen(filename, "r");
+    if(flot == NULL){
+        printf("pb ouverture fichier en lecture\n");
+        exit(1);
+    }
+    creationniveau1(flot);
+    fclose(flot);
+}
+
+void move(int *i, int *j, int x, int y){
+    SDL_Rect tmpcase;
+    tmpcase.x = positionperso.x;
+    tmpcase.y = positionperso.y;
+    //si caisse
+    if(tabNiveau[((*i)+y)*N + (*j)+x] == '$'){
+        //si sol après caisse
+        if(tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] == 's'){
+            tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] = '$';
+            tmpcase.x += x*LC*2;
+            tmpcase.y += y*LC*2;
+            SDL_BlitSurface(imgcaisse1, NULL, ecran, &tmpcase);
+            //déplacer le perso
+            moveperso(i,j,x,y);
+        }
+    }
+    if(tabNiveau[((*i)+y)*N + (*j)+x] == '#'){
+
+    }
+    // si sol 
+    if(tabNiveau[((*i)+y)*N + (*j)+x] == 's'){
+        //déplacer le perso
+        moveperso(i,j,x,y);
+    }
+}
+
+void moveperso(int *i, int *j, int x, int y){
+        tabNiveau[(*i)*N + (*j)] = 's';
+        *j += x;
+        *i += y;
+        tabNiveau[(*i)*N + (*j)] = '@';
+        SDL_BlitSurface(imgsol, NULL, ecran, &positionperso);
+        positionperso.x += x*LC;
+        positionperso.y += y*LC;
+        dessine();
+}
 
 void dessine(){
     //SDL_FillRect(ecran, NULL,SDL_MapRGB(ecran->format, 0, 0, 0));

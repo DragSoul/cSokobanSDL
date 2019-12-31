@@ -19,6 +19,9 @@ void loadImg();
 void freeImg();
 void creationniveau1(FILE *flot);
 void boucleEv();
+void move(int *i, int *j, int x, int y);
+void moveperso(int *i, int *j, int x, int y);
+void restart(int lv);
 void dessine();
 
 //images utilisées
