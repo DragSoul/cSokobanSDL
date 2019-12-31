@@ -225,21 +225,28 @@ void move(int *i, int *j, int x, int y){
     // si sol 
     else{
         //si caisse
-        if(tabNiveau[((*i)+y)*N + (*j)+x] == '$'){
+        if(tabNiveau[((*i)+y)*N + (*j)+x] == '$' || tabNiveau[((*i)+y)*N + (*j)+x] == '*'){
             //si sol après caisse
-            if(tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] == 's'){
-                tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] = '$';
+            if(tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] != '#'){
                 tmpcase.x += x*LC*2;
                 tmpcase.y += y*LC*2;
-                SDL_BlitSurface(imgcaisse1, NULL, ecran, &tmpcase);
-                //déplacer le perso
-                moveperso(i,j,x,y);
+                if(tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] == 's'){
+                    tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] = '$';
+                    SDL_BlitSurface(imgcaisse1, NULL, ecran, &tmpcase);
+                }
+                else{
+                    tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] = '*';
+                    SDL_BlitSurface(imgcaisse2, NULL, ecran, &tmpcase);
+                }
+                
             }
-            //pas déplacer perso 2 fois 
-            return;
+            else{
+                // pas déplacer le perso
+                return;
+            }
         }
-            //déplacer le perso
-            moveperso(i,j,x,y);
+        //déplacer le perso
+        moveperso(i,j,x,y);
     }
 }
 
