@@ -31,6 +31,7 @@ SDL_Surface *imgcaisse2;
 SDL_Surface *imgmur;
 SDL_Surface *imgsol;
 SDL_Surface *imgdest;
+SDL_Surface *imgpersodest;
 
 SDL_Rect positionperso;
 SDL_Surface * ecran = NULL;

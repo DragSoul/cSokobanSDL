@@ -42,7 +42,8 @@ void loadImg(){
     imgsol = SDL_LoadBMP("images/sol.bmp");
     imgdest = SDL_LoadBMP("images/solcible.bmp");
     imgmur = SDL_LoadBMP("images/mur.bmp");
-    if(imgperso == NULL || imgcaisse1 == NULL ||imgcaisse2 == NULL ||imgsol == NULL ||imgdest == NULL ||imgmur == NULL){
+    imgpersodest = SDL_LoadBMP("images/joseph_cible.bmp");
+    if(imgperso == NULL || imgcaisse1 == NULL ||imgcaisse2 == NULL ||imgsol == NULL ||imgdest == NULL ||imgmur == NULL || imgpersodest == NULL){
         printf("pas trouvé img\n");
         exit(1);
     }
@@ -55,6 +56,7 @@ void freeImg(){
     SDL_FreeSurface(imgsol);
     SDL_FreeSurface(imgdest);
     SDL_FreeSurface(imgmur);
+    SDL_FreeSurface(imgpersodest);
 }
 
 //création d'un tableau pour avoir le niveau en mémoire
@@ -103,6 +105,14 @@ void creationniveau1(FILE *flot){
                 positionperso = pos;
                 pos.x += LC;
                 break;
+
+            case 'd':
+                tabNiveau[i*N + j] = c;
+                j++;
+                SDL_BlitSurface(imgpersodest, NULL, ecran, &pos);
+                pos.x += LC;
+                break;
+
             case '\n':
                 i++;
                 j = 0;
@@ -244,6 +254,11 @@ void move(int *i, int *j, int x, int y){
                 // pas déplacer le perso
                 return;
             }
+        }
+        //si destination caisse
+        if(tabNiveau[((*i)+y)*N + (*j)+x] == '.'){
+            //conflit avec moveperso car faut pas dessiner le perso mais le perso sur la case dest.
+            //lorsu'on la quitte, faut redessiner le perso et la case dest derriere lui.
         }
         //déplacer le perso
         moveperso(i,j,x,y);
