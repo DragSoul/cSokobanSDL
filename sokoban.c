@@ -13,7 +13,7 @@ int main(int argc, char ** argv){
         fprintf(stderr, "Erreur VideoMode %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }
-    FILE *flot = fopen("niveau1", "r");
+    FILE *flot = fopen("niveaututo", "r");
     if(flot == NULL){
         printf("pb ouverture fichier en lecture\n");
         exit(1);
@@ -111,7 +111,7 @@ void creationniveau1(FILE *flot){
                 pos.x += LC;
                 break;
             //perso sur dest
-            case 'd':
+            case '+':
                 tabNiveau[i*N + j] = c;
                 j++;
                 SDL_BlitSurface(imgpersodest, NULL, ecran, &pos);
@@ -186,27 +186,38 @@ void boucleEv(){
                     case SDLK_UP:
                         //y-1
                         move(&i,&j,0,-1);
+                        cont = win();
                         break;
 
                     case SDLK_DOWN:
                         //y+1
                         move(&i,&j,0,1);
+                        cont = win();
                         break;
 
                     case SDLK_LEFT:
                         //x-1
                         move(&i,&j,-1,0);
+                        cont = win();
                         break;
 
                     case SDLK_RIGHT:
                         //x+1
                         move(&i,&j,1,0);
+                        cont = win();
                         break;
+
                     case 'r':
                         //restart level
                         restart(1);
                         i = positionperso.y/LC;
                         j = positionperso.x/LC;
+                        break;
+
+                    //affiche tab (debug)
+                    case 'd':
+                        printf("\ntab = \n");
+                        affichetab(tabNiveau);
                         break;
 
                     case 'q':
@@ -283,7 +294,7 @@ void move(int *i, int *j, int x, int y){
             break;
 
         case 's':
-            if(tabNiveau[(*i)*N + (*j)] == 'd')
+            if(tabNiveau[(*i)*N + (*j)] == '+')
                 moveperso(i,j,x,y,2);
             else moveperso(i,j,x,y,0);
             break;
@@ -301,7 +312,7 @@ void move(int *i, int *j, int x, int y){
                     tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] = '*';
                     SDL_BlitSurface(imgcaisse2, NULL, ecran, &tmpcase);
                 }
-                if(tabNiveau[(*i)*N + (*j)] == 'd')
+                if(tabNiveau[(*i)*N + (*j)] == '+')
                     moveperso(i,j,x,y,2);
                 else moveperso(i,j,x,y,0);
             }
@@ -320,7 +331,7 @@ void move(int *i, int *j, int x, int y){
                     tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] = '*';
                     SDL_BlitSurface(imgcaisse2, NULL, ecran, &tmpcase);
                 }
-                if(tabNiveau[(*i)*N + (*j)] == 'd')
+                if(tabNiveau[(*i)*N + (*j)] == '+')
                     moveperso(i,j,x,y,3);
                 else moveperso(i,j,x,y,1);
             }
@@ -328,7 +339,7 @@ void move(int *i, int *j, int x, int y){
 
         //dest
         case '.':
-            if(tabNiveau[(*i)*N + (*j)] == 'd')
+            if(tabNiveau[(*i)*N + (*j)] == '+')
                 moveperso(i,j,x,y,3);
             else moveperso(i,j,x,y,1);
             break;
@@ -351,7 +362,7 @@ void moveperso(int *i, int *j, int x, int y, int boul){
             tabNiveau[(*i)*N + (*j)] = 's';
             *j += x;
             *i += y;
-            tabNiveau[(*i)*N + (*j)] = 'd';
+            tabNiveau[(*i)*N + (*j)] = '+';
             SDL_BlitSurface(imgsol, NULL, ecran, &positionperso);
             positionperso.x += x*LC;
             positionperso.y += y*LC;
@@ -371,7 +382,7 @@ void moveperso(int *i, int *j, int x, int y, int boul){
             tabNiveau[(*i)*N + (*j)] = '.';
             *j += x;
             *i += y;
-            tabNiveau[(*i)*N + (*j)] = 'd';
+            tabNiveau[(*i)*N + (*j)] = '+';
             SDL_BlitSurface(imgdest, NULL, ecran, &positionperso);
             positionperso.x += x*LC;
             positionperso.y += y*LC;
@@ -387,6 +398,24 @@ void dessine(int boul){
     SDL_Flip(ecran);
 }
 
+
+int win(){
+    for(int i = 0; i < 110; i++){
+        if(tabNiveau[i] == '$'){
+            return 1;
+        } 
+    }
+    return 0;
+}
+
+void affichetab(char tab[]){
+    for(int i = 0; i < 11; i++){
+        for(int j = 0; j < 10; j++){
+            printf("%c", tab[i*N+j]);
+        }
+        printf("\n");
+    }
+}
 
 //0 = normal
 //1 = perso arrive sur case dest
