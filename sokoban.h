@@ -20,9 +20,9 @@ void freeImg();
 void creationniveau1(FILE *flot);
 void boucleEv();
 void move(int *i, int *j, int x, int y);
-void moveperso(int *i, int *j, int x, int y);
+void moveperso(int *i, int *j, int x, int y, int boul);
 void restart(int lv);
-void dessine();
+void dessine(int boul);
 
 //images utilisées
 SDL_Surface *imgperso;

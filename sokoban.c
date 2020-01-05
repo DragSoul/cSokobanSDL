@@ -24,7 +24,6 @@ int main(int argc, char ** argv){
     SDL_WM_SetCaption("Sokoban", NULL);
     creationniveau1(flot);
     
-    dessine();
     SDL_Flip(ecran);
     boucleEv();
 
@@ -68,36 +67,42 @@ void creationniveau1(FILE *flot){
     pos.y = 0;
     while((c = fgetc(flot)) != EOF){
         switch(c){
+            //sol
             case 's':
                 tabNiveau[i*N + j] = c;
                 j++;
                 SDL_BlitSurface(imgsol, NULL, ecran, &pos);
                 pos.x += LC;
                 break;
+            //mur
             case '#':
                 tabNiveau[i*N + j] = c;
                 j++;
                 SDL_BlitSurface(imgmur, NULL, ecran, &pos);
                 pos.x += LC;
                 break;
+            //caisse1
             case '$':
                 tabNiveau[i*N + j] = c;
                 j++;
                 SDL_BlitSurface(imgcaisse1, NULL, ecran, &pos);
                 pos.x += LC;
                 break;
+            //caisse2
             case '*':
                 tabNiveau[i*N + j] = c;
                 j++;
                 SDL_BlitSurface(imgcaisse2, NULL, ecran, &pos);
                 pos.x += LC;
                 break;
+            //dest
             case '.':
                 tabNiveau[i*N + j] = c;
                 j++;
                 SDL_BlitSurface(imgdest, NULL, ecran, &pos);
                 pos.x += LC;
                 break;
+            //perso
             case '@':
                 tabNiveau[i*N + j] = c;
                 j++;
@@ -105,7 +110,7 @@ void creationniveau1(FILE *flot){
                 positionperso = pos;
                 pos.x += LC;
                 break;
-
+            //perso sur dest
             case 'd':
                 tabNiveau[i*N + j] = c;
                 j++;
@@ -224,11 +229,13 @@ void restart(int lv){
     fclose(flot);
 }
 
-void move(int *i, int *j, int x, int y){
+//old move
+/*void move(int *i, int *j, int x, int y){
     SDL_Rect tmpcase;
     tmpcase.x = positionperso.x;
     tmpcase.y = positionperso.y;
     
+    //si mur
     if(tabNiveau[((*i)+y)*N + (*j)+x] == '#'){
 
     }
@@ -237,7 +244,7 @@ void move(int *i, int *j, int x, int y){
         //si caisse
         if(tabNiveau[((*i)+y)*N + (*j)+x] == '$' || tabNiveau[((*i)+y)*N + (*j)+x] == '*'){
             //si sol après caisse
-            if(tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] != '#'){
+            if(tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] != '#' && tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] != '$' && tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] != '*'){
                 tmpcase.x += x*LC*2;
                 tmpcase.y += y*LC*2;
                 if(tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] == 's'){
@@ -263,21 +270,125 @@ void move(int *i, int *j, int x, int y){
         //déplacer le perso
         moveperso(i,j,x,y);
     }
+}*/
+
+void move(int *i, int *j, int x, int y){
+    SDL_Rect tmpcase;
+    tmpcase.x = positionperso.x;
+    tmpcase.y = positionperso.y;
+    switch(tabNiveau[((*i)+y)*N + (*j)+x]){
+
+        //mur
+        case '#':
+            break;
+
+        case 's':
+            if(tabNiveau[(*i)*N + (*j)] == 'd')
+                moveperso(i,j,x,y,2);
+            else moveperso(i,j,x,y,0);
+            break;
+
+        //caisse1
+        case '$':
+            if(tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] != '#' && tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] != '$' && tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] != '*'){
+            tmpcase.x += x*LC*2;
+            tmpcase.y += y*LC*2;
+                if(tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] == 's'){
+                    tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] = '$';
+                    SDL_BlitSurface(imgcaisse1, NULL, ecran, &tmpcase);
+                }
+                else{
+                    tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] = '*';
+                    SDL_BlitSurface(imgcaisse2, NULL, ecran, &tmpcase);
+                }
+                if(tabNiveau[(*i)*N + (*j)] == 'd')
+                    moveperso(i,j,x,y,2);
+                else moveperso(i,j,x,y,0);
+            }
+            break;
+            
+        //caisse2
+        case '*':
+            if(tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] != '#' && tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] != '$' && tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] != '*'){
+            tmpcase.x += x*LC*2;
+            tmpcase.y += y*LC*2;
+                if(tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] == 's'){
+                    tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] = '$';
+                    SDL_BlitSurface(imgcaisse1, NULL, ecran, &tmpcase);
+                }
+                else{
+                    tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] = '*';
+                    SDL_BlitSurface(imgcaisse2, NULL, ecran, &tmpcase);
+                }
+                if(tabNiveau[(*i)*N + (*j)] == 'd')
+                    moveperso(i,j,x,y,3);
+                else moveperso(i,j,x,y,1);
+            }
+            break;
+
+        //dest
+        case '.':
+            if(tabNiveau[(*i)*N + (*j)] == 'd')
+                moveperso(i,j,x,y,3);
+            else moveperso(i,j,x,y,1);
+            break;
+    }
+    
 }
 
-void moveperso(int *i, int *j, int x, int y){
-        tabNiveau[(*i)*N + (*j)] = 's';
-        *j += x;
-        *i += y;
-        tabNiveau[(*i)*N + (*j)] = '@';
-        SDL_BlitSurface(imgsol, NULL, ecran, &positionperso);
-        positionperso.x += x*LC;
-        positionperso.y += y*LC;
-        dessine();
+void moveperso(int *i, int *j, int x, int y, int boul){
+        if(boul == 0){
+            tabNiveau[(*i)*N + (*j)] = 's';
+            *j += x;
+            *i += y;
+            tabNiveau[(*i)*N + (*j)] = '@';
+            SDL_BlitSurface(imgsol, NULL, ecran, &positionperso);
+            positionperso.x += x*LC;
+            positionperso.y += y*LC;
+        }
+
+        if(boul == 1){
+            tabNiveau[(*i)*N + (*j)] = 's';
+            *j += x;
+            *i += y;
+            tabNiveau[(*i)*N + (*j)] = 'd';
+            SDL_BlitSurface(imgsol, NULL, ecran, &positionperso);
+            positionperso.x += x*LC;
+            positionperso.y += y*LC;
+        }
+
+        if(boul == 2){
+            tabNiveau[(*i)*N + (*j)] = '.';
+            *j += x;
+            *i += y;
+            tabNiveau[(*i)*N + (*j)] = '@';
+            SDL_BlitSurface(imgdest, NULL, ecran, &positionperso);
+            positionperso.x += x*LC;
+            positionperso.y += y*LC;
+        }
+
+        if(boul == 3){
+            tabNiveau[(*i)*N + (*j)] = '.';
+            *j += x;
+            *i += y;
+            tabNiveau[(*i)*N + (*j)] = 'd';
+            SDL_BlitSurface(imgdest, NULL, ecran, &positionperso);
+            positionperso.x += x*LC;
+            positionperso.y += y*LC;
+        }
+        
+        dessine(boul);
 }
 
-void dessine(){
-    //SDL_FillRect(ecran, NULL,SDL_MapRGB(ecran->format, 0, 0, 0));
-    SDL_BlitSurface(imgperso, NULL, ecran, &positionperso);
+void dessine(int boul){
+    if(boul == 0 || boul == 2)
+        SDL_BlitSurface(imgperso, NULL, ecran, &positionperso);
+    else SDL_BlitSurface(imgpersodest, NULL, ecran, &positionperso);
     SDL_Flip(ecran);
 }
+
+
+//0 = normal
+//1 = perso arrive sur case dest
+//2 = perso quitte une case dest pour du sol
+//3 = perso quitte une case dest pour une case dest
