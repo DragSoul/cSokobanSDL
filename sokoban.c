@@ -13,7 +13,7 @@ int main(int argc, char ** argv){
         fprintf(stderr, "Erreur VideoMode %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }
-    FILE *flot = fopen("niveaututo", "r");
+    FILE *flot = fopen("niveau1", "r");
     if(flot == NULL){
         printf("pb ouverture fichier en lecture\n");
         exit(1);
@@ -129,48 +129,6 @@ void creationniveau1(FILE *flot){
     SDL_Flip(ecran);
 }
 
-//création de niveau sans garder en mémoire
-/*void creationniveau1(FILE *flot){
-    char c;
-    SDL_Rect pos;
-    pos.x = 0;
-    pos.y = 0;
-    while((c = fgetc(flot)) != EOF){
-        switch(c){
-            case 's':
-                SDL_BlitSurface(imgsol, NULL, ecran, &pos);
-                pos.x += LC;
-                break;
-            case '#':
-                SDL_BlitSurface(imgmur, NULL, ecran, &pos);
-                pos.x += LC;
-                break;
-            case '$':
-                SDL_BlitSurface(imgcaisse1, NULL, ecran, &pos);
-                pos.x += LC;
-                break;
-            case '*':
-                SDL_BlitSurface(imgcaisse2, NULL, ecran, &pos);
-                pos.x += LC;
-                break;
-            case '.':
-                SDL_BlitSurface(imgdest, NULL, ecran, &pos);
-                pos.x += LC;
-                break;
-            case '@':
-                SDL_BlitSurface(imgperso, NULL, ecran, &pos);
-                positionperso = pos;
-                pos.x += LC;
-                break;
-            case '\n':
-                pos.x = 0;
-                pos.y += LC;
-                break;
-        }
-    }
-    SDL_Flip(ecran);
-}*/
-
 void boucleEv(){
     int cont = 1;
     int i = positionperso.y/LC;
@@ -240,57 +198,57 @@ void restart(int lv){
     fclose(flot);
 }
 
-//old move
-/*void move(int *i, int *j, int x, int y){
+void movecaisse(int indexmove2, int x, int y){
     SDL_Rect tmpcase;
-    tmpcase.x = positionperso.x;
-    tmpcase.y = positionperso.y;
-    
-    //si mur
-    if(tabNiveau[((*i)+y)*N + (*j)+x] == '#'){
-
+    tmpcase.x = positionperso.x + x*LC*2;
+    tmpcase.y = positionperso.y + y*LC*2;
+    if(tabNiveau[indexmove2] == 's'){
+        tabNiveau[indexmove2] = '$';
+        SDL_BlitSurface(imgcaisse1, NULL, ecran, &tmpcase);
     }
-    // si sol 
     else{
-        //si caisse
-        if(tabNiveau[((*i)+y)*N + (*j)+x] == '$' || tabNiveau[((*i)+y)*N + (*j)+x] == '*'){
-            //si sol après caisse
-            if(tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] != '#' && tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] != '$' && tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] != '*'){
-                tmpcase.x += x*LC*2;
-                tmpcase.y += y*LC*2;
-                if(tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] == 's'){
-                    tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] = '$';
-                    SDL_BlitSurface(imgcaisse1, NULL, ecran, &tmpcase);
-                }
-                else{
-                    tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] = '*';
-                    SDL_BlitSurface(imgcaisse2, NULL, ecran, &tmpcase);
-                }
-                
-            }
-            else{
-                // pas déplacer le perso
-                return;
-            }
-        }
-        //si destination caisse
-        if(tabNiveau[((*i)+y)*N + (*j)+x] == '.'){
-            //conflit avec moveperso car faut pas dessiner le perso mais le perso sur la case dest.
-            //lorsu'on la quitte, faut redessiner le perso et la case dest derriere lui.
-        }
-        //déplacer le perso
-        moveperso(i,j,x,y);
+        tabNiveau[indexmove2] = '*';
+        SDL_BlitSurface(imgcaisse2, NULL, ecran, &tmpcase);
     }
-}*/
+}
+
+int canMoveCaisse(int indexmove2){
+    return tabNiveau[indexmove2] != '#' && tabNiveau[indexmove2] != '$' && tabNiveau[indexmove2] != '*';
+}
 
 void move(int *i, int *j, int x, int y){
-    SDL_Rect tmpcase;
-    tmpcase.x = positionperso.x;
-    tmpcase.y = positionperso.y;
-    switch(tabNiveau[((*i)+y)*N + (*j)+x]){
+    int curentIndex = (*i)*N + (*j);
+    int indexmove1 = ((*i)+y)*N + (*j)+x;
+    int indexmove2 = ((*i)+(2*y))*N + (*j)+(2*x);
+    switch(tabNiveau[indexmove1]){
 
         //mur
         case '#':
+            break;
+        //caisse1
+        case '$':
+            if(canMoveCaisse(indexmove2)){
+                //move caisse
+                movecaisse(indexmove2, x, y);
+                if(tabNiveau[(*i)*N + (*j)] == '+')
+                    moveperso(i,j,x,y,2);
+                else moveperso(i,j,x,y,0);
+            }
+            break;
+        //caisse2
+        case '*':
+            if(canMoveCaisse(indexmove2)){
+                movecaisse(indexmove2,x,y);
+                if(tabNiveau[(*i)*N + (*j)] == '+')
+                    moveperso(i,j,x,y,3);
+                else moveperso(i,j,x,y,1);
+            }
+            break;
+        //dest
+        case '.':
+            if(tabNiveau[(*i)*N + (*j)] == '+')
+                moveperso(i,j,x,y,3);
+            else moveperso(i,j,x,y,1);
             break;
 
         case 's':
@@ -298,64 +256,22 @@ void move(int *i, int *j, int x, int y){
                 moveperso(i,j,x,y,2);
             else moveperso(i,j,x,y,0);
             break;
-
-        //caisse1
-        case '$':
-            if(tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] != '#' && tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] != '$' && tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] != '*'){
-            tmpcase.x += x*LC*2;
-            tmpcase.y += y*LC*2;
-                if(tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] == 's'){
-                    tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] = '$';
-                    SDL_BlitSurface(imgcaisse1, NULL, ecran, &tmpcase);
-                }
-                else{
-                    tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] = '*';
-                    SDL_BlitSurface(imgcaisse2, NULL, ecran, &tmpcase);
-                }
-                if(tabNiveau[(*i)*N + (*j)] == '+')
-                    moveperso(i,j,x,y,2);
-                else moveperso(i,j,x,y,0);
-            }
-            break;
-            
-        //caisse2
-        case '*':
-            if(tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] != '#' && tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] != '$' && tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] != '*'){
-            tmpcase.x += x*LC*2;
-            tmpcase.y += y*LC*2;
-                if(tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] == 's'){
-                    tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] = '$';
-                    SDL_BlitSurface(imgcaisse1, NULL, ecran, &tmpcase);
-                }
-                else{
-                    tabNiveau[((*i)+(2*y))*N + (*j)+(2*x)] = '*';
-                    SDL_BlitSurface(imgcaisse2, NULL, ecran, &tmpcase);
-                }
-                if(tabNiveau[(*i)*N + (*j)] == '+')
-                    moveperso(i,j,x,y,3);
-                else moveperso(i,j,x,y,1);
-            }
-            break;
-
-        //dest
-        case '.':
-            if(tabNiveau[(*i)*N + (*j)] == '+')
-                moveperso(i,j,x,y,3);
-            else moveperso(i,j,x,y,1);
-            break;
     }
-    
 }
 
 void moveperso(int *i, int *j, int x, int y, int boul){
+    /*if(tabNiveau[(*i)*N + (*j)] == 's'){
+        tabNiveau[(*i)*N + (*j)] = '.';
+    }
+    else{
+        tabNiveau[(*i)*N + (*j)] = 's';
+    }*/
         if(boul == 0){
             tabNiveau[(*i)*N + (*j)] = 's';
             *j += x;
             *i += y;
             tabNiveau[(*i)*N + (*j)] = '@';
             SDL_BlitSurface(imgsol, NULL, ecran, &positionperso);
-            positionperso.x += x*LC;
-            positionperso.y += y*LC;
         }
 
         if(boul == 1){
@@ -364,8 +280,6 @@ void moveperso(int *i, int *j, int x, int y, int boul){
             *i += y;
             tabNiveau[(*i)*N + (*j)] = '+';
             SDL_BlitSurface(imgsol, NULL, ecran, &positionperso);
-            positionperso.x += x*LC;
-            positionperso.y += y*LC;
         }
 
         if(boul == 2){
@@ -374,8 +288,6 @@ void moveperso(int *i, int *j, int x, int y, int boul){
             *i += y;
             tabNiveau[(*i)*N + (*j)] = '@';
             SDL_BlitSurface(imgdest, NULL, ecran, &positionperso);
-            positionperso.x += x*LC;
-            positionperso.y += y*LC;
         }
 
         if(boul == 3){
@@ -384,9 +296,10 @@ void moveperso(int *i, int *j, int x, int y, int boul){
             *i += y;
             tabNiveau[(*i)*N + (*j)] = '+';
             SDL_BlitSurface(imgdest, NULL, ecran, &positionperso);
-            positionperso.x += x*LC;
-            positionperso.y += y*LC;
         }
+
+        positionperso.x += x*LC;
+        positionperso.y += y*LC;
         
         dessine(boul);
 }
