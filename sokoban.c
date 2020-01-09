@@ -18,6 +18,8 @@ int main(int argc, char ** argv){
         printf("pb ouverture fichier en lecture\n");
         exit(1);
     }
+
+    menu();
     //rectangle = SDL_CreateRGBSurface(SDL_HWSURFACE, LC, LC, 32, 0, 0, 0, 0);
     //SDL_FillRect(rectangle, NULL, SDL_MapRGB(rectangle->format, 255, 255, 255));
     // Légende de la fenêtre
@@ -35,6 +37,7 @@ int main(int argc, char ** argv){
 }
 
 void loadImg(){
+    imgmenu = SDL_LoadBMP("images/menu.bmp");
     imgperso = SDL_LoadBMP("images/joseph_pixel.bmp");
     imgcaisse1 = SDL_LoadBMP("images/caisse.bmp");
     imgcaisse2 = SDL_LoadBMP("images/caissesombre.bmp");
@@ -49,6 +52,7 @@ void loadImg(){
 }
 
 void freeImg(){
+    SDL_FreeSurface(imgmenu);
     SDL_FreeSurface(imgperso);
     SDL_FreeSurface(imgcaisse1);
     SDL_FreeSurface(imgcaisse2);
@@ -56,6 +60,31 @@ void freeImg(){
     SDL_FreeSurface(imgdest);
     SDL_FreeSurface(imgmur);
     SDL_FreeSurface(imgpersodest);
+}
+
+void menu(){
+    int count = 1;
+    SDL_Event event;
+    SDL_Rect pos;
+    pos.x = 0;
+    pos.y = 0;
+    SDL_BlitSurface(imgmenu, NULL, ecran, &pos);
+    SDL_Flip(ecran);
+    while(count){
+        SDL_WaitEvent(&event);
+        switch (event.type){
+            case SDL_MOUSEBUTTONUP:
+                //bouton play (je gruge un peu avec les pixels)
+                if(event.button.y > 364 && event.button.y < 419
+                && event.button.x > 124 && event.button.x < 381){
+                    count = 0; //si plusieurs boutons, faire de menu() la fonction qui fait les appel
+                }
+                break;
+        
+        default:
+            break;
+        }
+    }
 }
 
 //création d'un tableau pour avoir le niveau en mémoire
