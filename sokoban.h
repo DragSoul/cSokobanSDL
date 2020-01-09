@@ -14,8 +14,10 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_types.h>
 
+
 typedef enum{false,true}Boolean;
 
+void menu();
 void loadImg();
 void freeImg();
 void creationniveau1(FILE *flot);
@@ -29,6 +31,7 @@ int win();
 void affichetab(char tab[]);
 
 //images utilisées
+SDL_Surface *imgmenu;
 SDL_Surface *imgperso;
 SDL_Surface *imgcaisse1;
 SDL_Surface *imgcaisse2;
@@ -43,3 +46,8 @@ SDL_Surface * ecran = NULL;
 char *tabNiveau;
 
 #endif
+
+
+
+
+//Pour écrire avec SDL : SDL_ttf
