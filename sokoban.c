@@ -233,11 +233,11 @@ void movecaisse(int indexmove2, int x, int y){
     tmpcase.y = positionperso.y + y*LC*2;
     if(tabNiveau[indexmove2] == 's'){
         tabNiveau[indexmove2] = '$';
-        SDL_BlitSurface(imgcaisse1, NULL, ecran, &tmpcase);
+        SDL_BlitSurface(imgcaisse1, NULL, ecran, &tmpcase); // display $
     }
     else{
         tabNiveau[indexmove2] = '*';
-        SDL_BlitSurface(imgcaisse2, NULL, ecran, &tmpcase);
+        SDL_BlitSurface(imgcaisse2, NULL, ecran, &tmpcase); // display *
     }
 }
 
@@ -259,84 +259,51 @@ void move(int *i, int *j, int x, int y){
             if(canMoveCaisse(indexmove2)){
                 //move caisse
                 movecaisse(indexmove2, x, y);
-                if(tabNiveau[(*i)*N + (*j)] == '+')
-                    moveperso(i,j,x,y,2);
-                else moveperso(i,j,x,y,0);
+                moveperso(i,j,x,y,'@');
             }
             break;
         //caisse2
         case '*':
             if(canMoveCaisse(indexmove2)){
                 movecaisse(indexmove2,x,y);
-                if(tabNiveau[(*i)*N + (*j)] == '+')
-                    moveperso(i,j,x,y,3);
-                else moveperso(i,j,x,y,1);
+                moveperso(i,j,x,y,'+');
             }
             break;
         //dest
         case '.':
-            if(tabNiveau[(*i)*N + (*j)] == '+')
-                moveperso(i,j,x,y,3);
-            else moveperso(i,j,x,y,1);
+            moveperso(i,j,x,y,'+');
             break;
 
         case 's':
-            if(tabNiveau[(*i)*N + (*j)] == '+')
-                moveperso(i,j,x,y,2);
-            else moveperso(i,j,x,y,0);
+            moveperso(i,j,x,y,'@');
             break;
     }
 }
 
-void moveperso(int *i, int *j, int x, int y, int boul){
-    /*if(tabNiveau[(*i)*N + (*j)] == 's'){
-        tabNiveau[(*i)*N + (*j)] = '.';
+void moveperso(int *i, int *j, int x, int y, char movenext){
+    
+    int curentindex = (*i)*N + (*j);
+    int indexmove1 = ((*i)+y)*N + (*j)+x;
+    if(tabNiveau[curentindex] == '+'){
+        tabNiveau[curentindex] = '.';
+        SDL_BlitSurface(imgdest, NULL, ecran, &positionperso); // display .
     }
     else{
-        tabNiveau[(*i)*N + (*j)] = 's';
-    }*/
-        if(boul == 0){
-            tabNiveau[(*i)*N + (*j)] = 's';
-            *j += x;
-            *i += y;
-            tabNiveau[(*i)*N + (*j)] = '@';
-            SDL_BlitSurface(imgsol, NULL, ecran, &positionperso);
-        }
-
-        if(boul == 1){
-            tabNiveau[(*i)*N + (*j)] = 's';
-            *j += x;
-            *i += y;
-            tabNiveau[(*i)*N + (*j)] = '+';
-            SDL_BlitSurface(imgsol, NULL, ecran, &positionperso);
-        }
-
-        if(boul == 2){
-            tabNiveau[(*i)*N + (*j)] = '.';
-            *j += x;
-            *i += y;
-            tabNiveau[(*i)*N + (*j)] = '@';
-            SDL_BlitSurface(imgdest, NULL, ecran, &positionperso);
-        }
-
-        if(boul == 3){
-            tabNiveau[(*i)*N + (*j)] = '.';
-            *j += x;
-            *i += y;
-            tabNiveau[(*i)*N + (*j)] = '+';
-            SDL_BlitSurface(imgdest, NULL, ecran, &positionperso);
-        }
-
-        positionperso.x += x*LC;
-        positionperso.y += y*LC;
-        
-        dessine(boul);
+        tabNiveau[curentindex] = 's';
+        SDL_BlitSurface(imgsol, NULL, ecran, &positionperso); // display s
+    }
+    tabNiveau[indexmove1] = movenext;
+    *j += x;
+    *i += y;
+    positionperso.x += x*LC;
+    positionperso.y += y*LC;
+    dessine(movenext);
 }
 
-void dessine(int boul){
-    if(boul == 0 || boul == 2)
-        SDL_BlitSurface(imgperso, NULL, ecran, &positionperso);
-    else SDL_BlitSurface(imgpersodest, NULL, ecran, &positionperso);
+void dessine(char movenext){
+    if(movenext == '@')
+        SDL_BlitSurface(imgperso, NULL, ecran, &positionperso); // display @
+    else SDL_BlitSurface(imgpersodest, NULL, ecran, &positionperso); // display +
     SDL_Flip(ecran);
 }
 
@@ -358,8 +325,3 @@ void affichetab(char tab[]){
         printf("\n");
     }
 }
-
-//0 = normal
-//1 = perso arrive sur case dest
-//2 = perso quitte une case dest pour du sol
-//3 = perso quitte une case dest pour une case dest
