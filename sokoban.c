@@ -20,19 +20,22 @@ int main(int argc, char ** argv){
     }
 
     menu();
-    //rectangle = SDL_CreateRGBSurface(SDL_HWSURFACE, LC, LC, 32, 0, 0, 0, 0);
-    //SDL_FillRect(rectangle, NULL, SDL_MapRGB(rectangle->format, 255, 255, 255));
     // Légende de la fenêtre
     SDL_WM_SetCaption("Sokoban", NULL);
     creationniveau1(flot);
-    
+    fclose(flot);
+    //load(); //commenter la création du lvl pour l'utiliser
     SDL_Flip(ecran);
+
+    
+    clockStart = clock();
     boucleEv();
-
-
+    clockEnd = clock();
+    extime = extime + (float) (clockEnd-clockStart)/CLOCKS_PER_SEC; //seconde
+    printf("time : %f\nnb Moves : %d\n", extime, nbMove);
     freeImg();
     SDL_Quit();
-    fclose(flot);
+    
     return EXIT_SUCCESS;
 }
 
@@ -207,6 +210,10 @@ void boucleEv(){
                         affichetab(tabNiveau);
                         break;
 
+                    case 's':
+                        save();
+                        break;
+
                     case 'q':
                         cont = 0;
                         break;
@@ -215,6 +222,39 @@ void boucleEv(){
     }
 }
 
+//appuie sur s pour sauvegarder le niveau
+void save(){
+    FILE *flot = fopen("sauv", "w");
+    if(flot == NULL){
+        printf("pb sauvegarde\n");
+        exit(1);
+    }
+    clockEnd = clock();
+    float extime=(float) (clockEnd-clockStart)/CLOCKS_PER_SEC; //seconde
+    fprintf(flot, "%f\n%d\n", extime, nbMove);
+    for (int i = 0; i < 11; i++){
+        for (int j = 0; j < 10; j++){
+            fprintf(flot, "%c", tabNiveau[i*N + j]);
+        }
+        fprintf(flot, "\n");
+    }
+    fclose(flot);
+}
+
+//charge le niveau depuis le fichier sauv
+void load(){
+    FILE *flot = fopen("sauv", "r");
+    if(flot == NULL){
+        printf("pb chargement\n");
+        exit(1);
+    }
+    fscanf(flot, "%f\n%d\n", &extime, &nbMove);
+    printf("time : %f\nnbCoup : %d\n", extime, nbMove);
+    creationniveau1(flot);
+    fclose(flot);
+}
+
+//recherge un niveau
 void restart(int lv){
     char filename[8];
     sprintf(filename, "niveau%d", lv);
@@ -226,6 +266,7 @@ void restart(int lv){
     creationniveau1(flot);
     fclose(flot);
 }
+
 
 void movecaisse(int indexmove2, int x, int y){
     if(tabNiveau[indexmove2] == 's'){
@@ -311,7 +352,7 @@ void move(int *i, int *j, int x, int y){
 }
 
 void moveperso(int *i, int *j, int x, int y, char movenext){
-    
+    nbMove++;
     int curentindex = (*i)*N + (*j);
     int indexmove1 = ((*i)+y)*N + (*j)+x;
     if(tabNiveau[curentindex] == '+'){
