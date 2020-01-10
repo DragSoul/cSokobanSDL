@@ -27,9 +27,10 @@ void movecaisse(int indexmove2, int x, int y);
 void move(int *i, int *j, int x, int y);
 void moveperso(int *i, int *j, int x, int y, char movenext);
 void restart(int lv);
-void dessine(char movenext);
+void dessine();
 int contient(char tab[], int n, char c);
 int win();
+void updatechar(char toupdate, int index);
 void affichetab(char tab[]);
 
 //images utilisées

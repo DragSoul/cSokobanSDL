@@ -228,21 +228,51 @@ void restart(int lv){
 }
 
 void movecaisse(int indexmove2, int x, int y){
-    SDL_Rect tmpcase;
-    tmpcase.x = positionperso.x + x*LC*2;
-    tmpcase.y = positionperso.y + y*LC*2;
     if(tabNiveau[indexmove2] == 's'){
         tabNiveau[indexmove2] = '$';
-        SDL_BlitSurface(imgcaisse1, NULL, ecran, &tmpcase); // display $
+        updatechar('$', indexmove2);
     }
     else{
         tabNiveau[indexmove2] = '*';
-        SDL_BlitSurface(imgcaisse2, NULL, ecran, &tmpcase); // display *
+        updatechar('*', indexmove2);
     }
 }
 
 int canMoveCaisse(int indexmove2){
     return tabNiveau[indexmove2] != '#' && tabNiveau[indexmove2] != '$' && tabNiveau[indexmove2] != '*';
+}
+
+void updatechar(char toupdate, int index){
+    //char chars[7]= {'s','$','#','*','+','.','@'};
+    int y = index / N;
+    int x = index - (y * N);
+    SDL_Rect rect;
+    rect.x = x*LC;
+    rect.y = y*LC;
+    //todo make struct {char, sdlimage} and make func to get sdl image with char
+    switch(toupdate){
+        case 's':
+            SDL_BlitSurface(imgsol, NULL, ecran, &rect); // display s
+            break;
+        case '$':
+            SDL_BlitSurface(imgcaisse1, NULL, ecran, &rect); // display $
+            break;
+        case '#':
+            SDL_BlitSurface(imgmur, NULL, ecran, &rect); // display #
+            break;
+        case '*':
+            SDL_BlitSurface(imgcaisse2, NULL, ecran, &rect); // display *
+            break;
+        case '+':
+            SDL_BlitSurface(imgpersodest, NULL, ecran, &rect); // display +
+            break;
+        case '.':
+            SDL_BlitSurface(imgdest, NULL, ecran, &rect); // display .
+            break;
+        case '@':
+            SDL_BlitSurface(imgperso, NULL, ecran, &rect); // display @
+            break;
+    }
 }
 
 void move(int *i, int *j, int x, int y){
@@ -286,24 +316,20 @@ void moveperso(int *i, int *j, int x, int y, char movenext){
     int indexmove1 = ((*i)+y)*N + (*j)+x;
     if(tabNiveau[curentindex] == '+'){
         tabNiveau[curentindex] = '.';
-        SDL_BlitSurface(imgdest, NULL, ecran, &positionperso); // display .
+        updatechar('.', curentindex);
     }
     else{
         tabNiveau[curentindex] = 's';
-        SDL_BlitSurface(imgsol, NULL, ecran, &positionperso); // display s
+        updatechar('s', curentindex);
     }
     tabNiveau[indexmove1] = movenext;
     *j += x;
     *i += y;
-    positionperso.x += x*LC;
-    positionperso.y += y*LC;
-    dessine(movenext);
+    updatechar(movenext, indexmove1);
+    dessine();
 }
 
-void dessine(char movenext){
-    if(movenext == '@')
-        SDL_BlitSurface(imgperso, NULL, ecran, &positionperso); // display @
-    else SDL_BlitSurface(imgpersodest, NULL, ecran, &positionperso); // display +
+void dessine(){
     SDL_Flip(ecran);
 }
 
