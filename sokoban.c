@@ -105,7 +105,7 @@ int canMoveCaisse(int indexmove2){
     return tabNiveau[indexmove2] != '#' && tabNiveau[indexmove2] != '$' && tabNiveau[indexmove2] != '*';
 }
 
-void move(point *pos, int x, int y){
+void movesoko(point *pos, int x, int y){
     int curentIndex = (pos->y)*N + (pos->x);
     int indexmove1 = ((pos->y)+y)*N + (pos->x)+x;
     int indexmove2 = ((pos->y)+(2*y))*N + (pos->x)+(2*x);

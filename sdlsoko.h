@@ -22,6 +22,7 @@ void dessine();
 void freeImg();
 void menu();
 void addallimg(int * index, char car, SDL_Surface *imgrect);
+void graphic();
 
 typedef struct 
 {
