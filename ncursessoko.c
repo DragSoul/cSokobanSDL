@@ -7,32 +7,32 @@ void updateshell(char toudate, int index){
 void shelldisplaychar(char todisplay){
     switch (todisplay)
     {
-    case 's':
+    case SOL:
         attron(COLOR_PAIR(1));
         printw("   ");
         break;
-    case '$':
+    case CAISSE:
         attron(COLOR_PAIR(2));
         printw(" ¤ ");
         break;
 
-    case '#':
+    case MUR:
         attron(COLOR_PAIR(5));
         printw("   ");
         break;
-    case '*':
+    case CAISSECIBLE:
         attron(COLOR_PAIR(3));
         printw(" ¤ ");
         break;
-    case '+':
+    case PERSCIBLE:
         attron(COLOR_PAIR(8));
         printw(" @ ");
         break;
-    case '.':
+    case SOLCIBLE:
         attron(COLOR_PAIR(9));
         printw(" x ");
         break;
-    case '@':
+    case PERS:
         attron(COLOR_PAIR(7));
         printw(" @ ");
         break;
