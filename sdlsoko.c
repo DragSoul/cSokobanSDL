@@ -120,7 +120,16 @@ void boucleEv(font* ftt){
     }
 }
 
-void menu(){
+void addbutton(allbutton *buttontab, SDL_Rect *rect, void(*callback)(void*), void* arg){
+    button b;
+    b.callback = callback;
+    b.rect = rect;
+    b.arg = arg;
+    buttontab->buttons[buttontab->len] = b;
+    buttontab->len += 1;
+}
+
+void menu(allbutton *buttontab){
     int count = 1;
     SDL_Event event;
     SDL_Rect pos;
@@ -132,11 +141,18 @@ void menu(){
         SDL_WaitEvent(&event);
         switch (event.type){
             case SDL_MOUSEBUTTONUP:
-                //bouton play (je gruge un peu avec les pixels)
+                for(int i = 0; i < buttontab->len; i++){
+                    if(event.button.y > buttontab->buttons[i].rect->y && event.button.y < buttontab->buttons[i].rect->y + buttontab->buttons[i].rect->h
+                    && event.button.x > buttontab->buttons[i].rect->x && buttontab->buttons[i].rect->x + buttontab->buttons[i].rect->w){
+                        buttontab->buttons[i].callback(buttontab->buttons[i].arg);
+                        count = 0;
+                    }
+                }
+                /*//bouton play (je gruge un peu avec les pixels)
                 if(event.button.y > 364 && event.button.y < 419
                 && event.button.x > 124 && event.button.x < 381){
                     count = 0; //si plusieurs boutons, faire de menu() la fonction qui fait les appel
-                }
+                }*/
                 break;
         
         default:
@@ -168,11 +184,27 @@ void freeImg(){
     }
 }
 
+void printnth(void* nothing){
+    printf("nothing\n");
+}
+
 void graphic(){
     //int font
     font *ftt;
     ftt = readfontinfo(220, "images/font.fnt","images/font_0.bmp");
 
+    button b[20];
+    allbutton allb;
+    allb.len = 0;
+    allb.buttons = b;
+
+    SDL_Rect rectbtn;
+    rectbtn.x = 124;
+    rectbtn.y = 364;
+    rectbtn.w = 257;
+    rectbtn.h = 55;
+
+    addbutton(&allb, &rectbtn, &printnth, NULL);
     setupdatecharfunc(&updatechar);
     setupdatescreenfunc(&dessine);
     loadImg();
@@ -194,7 +226,7 @@ void graphic(){
     }
     //printf("key repit : %d\n",SDL_EnableKeyRepeat(0, 0));
 
-    menu();
+    menu(&allb);
     // Légende de la fenêtre
     SDL_WM_SetCaption("Sokoban", NULL);
     creationniveau(flot);

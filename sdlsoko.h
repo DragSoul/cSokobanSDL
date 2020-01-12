@@ -16,6 +16,23 @@
 #include "fontutils.h"
 #include "sokoban.h"
 
+typedef struct{
+    SDL_Rect *rect;
+    void(*callback)(void*);
+    void* arg;
+}button;
+
+typedef struct{
+    button *buttons;
+    int len;
+}allbutton;
+
+typedef struct 
+{
+    char car;
+    SDL_Surface *img;
+}charimg;
+
 void loadImg();
 void boucleEv(font *ftt);
 void updatechar(char toupdate, int index);
@@ -25,11 +42,7 @@ void menu();
 void addallimg(int * index, char car, SDL_Surface *imgrect);
 void graphic();
 
-typedef struct 
-{
-    char car;
-    SDL_Surface *img;
-}charimg;
+
 
 //images utilisées
 charimg allimage[8];
