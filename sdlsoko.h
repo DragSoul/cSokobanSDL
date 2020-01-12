@@ -20,6 +20,7 @@ typedef struct{
     SDL_Rect *rect;
     void(*callback)(void*);
     void* arg;
+    char content[20];
 }button;
 
 typedef struct{
@@ -38,9 +39,10 @@ void boucleEv(font *ftt);
 void updatechar(char toupdate, int index);
 void dessine();
 void freeImg();
-void menu();
+void menu(allbutton *buttontab, font * ftt);
 void addallimg(int * index, char car, SDL_Surface *imgrect);
 void graphic();
+void dsiplaybtn(allbutton *allb, SDL_Surface *ecran, font *ftt);
 
 
 

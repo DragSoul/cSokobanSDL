@@ -120,34 +120,46 @@ void boucleEv(font* ftt){
     }
 }
 
-void addbutton(allbutton *buttontab, SDL_Rect *rect, void(*callback)(void*), void* arg){
+void addbutton(allbutton *buttontab, SDL_Rect *rect, void(*callback)(void*), void* arg, char* strcontent){
     button b;
     b.callback = callback;
     b.rect = rect;
     b.arg = arg;
+    strcpy(b.content, strcontent);
     buttontab->buttons[buttontab->len] = b;
     buttontab->len += 1;
 }
 
-void menu(allbutton *buttontab){
+int isinbutton(SDL_MouseButtonEvent btn,allbutton *buttontab){
+    for(int i = 0; i < buttontab->len; i++){
+        if(btn.y > buttontab->buttons[i].rect->y && btn.y < buttontab->buttons[i].rect->y + buttontab->buttons[i].rect->h
+                    && btn.x > buttontab->buttons[i].rect->x && buttontab->buttons[i].rect->x + buttontab->buttons[i].rect->w){
+            return i;
+        }
+    }
+    return -1;
+}
+
+void menu(allbutton *buttontab, font * ftt){
     int count = 1;
     SDL_Event event;
     SDL_Rect pos;
     pos.x = 0;
     pos.y = 0;
+    int indexbtn;
     SDL_BlitSurface(allimage[0].img, NULL, ecran, &pos);
+    dsiplaybtn(buttontab, ecran, ftt);
     SDL_Flip(ecran);
     while(count){
         SDL_WaitEvent(&event);
         switch (event.type){
             case SDL_MOUSEBUTTONUP:
-                for(int i = 0; i < buttontab->len; i++){
-                    if(event.button.y > buttontab->buttons[i].rect->y && event.button.y < buttontab->buttons[i].rect->y + buttontab->buttons[i].rect->h
-                    && event.button.x > buttontab->buttons[i].rect->x && buttontab->buttons[i].rect->x + buttontab->buttons[i].rect->w){
-                        buttontab->buttons[i].callback(buttontab->buttons[i].arg);
-                        count = 0;
-                    }
+                indexbtn = isinbutton(event.button, buttontab);
+                if(indexbtn != -1){
+                    buttontab->buttons[indexbtn].callback(buttontab->buttons[indexbtn].arg);
+                    count = 0;
                 }
+        
                 /*//bouton play (je gruge un peu avec les pixels)
                 if(event.button.y > 364 && event.button.y < 419
                 && event.button.x > 124 && event.button.x < 381){
@@ -188,23 +200,38 @@ void printnth(void* nothing){
     printf("nothing\n");
 }
 
+void dsiplaybtn(allbutton *allb, SDL_Surface *ecran, font *ftt){
+    SDL_Rect tmprect;
+
+    for(int i = 0; i < allb->len; i++){
+         SDL_FillRect(ecran, allb->buttons[i].rect, SDL_MapRGB(ecran->format,80,80,80));
+         tmprect.x = allb->buttons[i].rect->x + 10;
+         tmprect.y = allb->buttons[i].rect->y + 10;
+         displaystring(allb->buttons[i].content, ecran, tmprect, ftt);
+    }
+}
+
 void graphic(){
     //int font
     font *ftt;
     ftt = readfontinfo(220, "images/font.fnt","images/font_0.bmp");
 
+    //btn table
     button b[20];
     allbutton allb;
     allb.len = 0;
     allb.buttons = b;
 
+    //btn pos
     SDL_Rect rectbtn;
     rectbtn.x = 124;
     rectbtn.y = 364;
     rectbtn.w = 257;
     rectbtn.h = 55;
 
-    addbutton(&allb, &rectbtn, &printnth, NULL);
+    //add btn to allb
+    addbutton(&allb, &rectbtn, &printnth, NULL, "Play");
+
     setupdatecharfunc(&updatechar);
     setupdatescreenfunc(&dessine);
     loadImg();
@@ -226,7 +253,7 @@ void graphic(){
     }
     //printf("key repit : %d\n",SDL_EnableKeyRepeat(0, 0));
 
-    menu(&allb);
+    menu(&allb, ftt);
     // Légende de la fenêtre
     SDL_WM_SetCaption("Sokoban", NULL);
     creationniveau(flot);
