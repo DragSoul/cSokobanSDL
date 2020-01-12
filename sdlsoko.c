@@ -152,35 +152,45 @@ void menu(allbutton *buttontab, font * ftt){
     pos.x = 0;
     pos.y = 0;
     int indexbtn;
-    int tmpindexbtn;
+    int tmpindexbtn = -1;
     SDL_BlitSurface(allimage[0].img, NULL, ecran, &pos);
     dsiplaybtn(buttontab, ecran, ftt);
     SDL_Flip(ecran);
     while(count){
         SDL_WaitEvent(&event);
-        switch (event.type){
+        if(event.type == SDL_QUIT){
+            exit(0);
+        }
+        EventMouseButton(event, ftt, &count, buttontab,&indexbtn, &tmpindexbtn);
+    }
+}
+
+void EventMouseButton(SDL_Event event, font *ftt, int *count, allbutton *buttontab, int *indexbtn, int *tmpindexbtn){
+    switch (event.type){
             case SDL_MOUSEMOTION:
-                indexbtn = isinbutton(event.motion.x, event.motion.y, buttontab);
-                if(indexbtn != -1){
-                    tmpindexbtn = indexbtn;
-                    dsiplayonebtn(buttontab->buttons[indexbtn], ecran, ftt, 120,120,120);
+                *indexbtn = isinbutton(event.motion.x, event.motion.y, buttontab);
+                if(*indexbtn != -1){
+                    if(*tmpindexbtn != -1){
+                        dsiplayonebtn(buttontab->buttons[*tmpindexbtn], ecran, ftt, 80,80,80);
+                    }
+                    *tmpindexbtn = *indexbtn;
+                    dsiplayonebtn(buttontab->buttons[*indexbtn], ecran, ftt, 150,150,150);
                 }else{
-                    dsiplayonebtn(buttontab->buttons[tmpindexbtn], ecran, ftt, 80,80,80);
+                    dsiplayonebtn(buttontab->buttons[*tmpindexbtn], ecran, ftt, 80,80,80);
                 }
                 dessine();
                 break;
             case SDL_MOUSEBUTTONUP:
-                indexbtn = isinbutton(event.button.x, event.button.y, buttontab);
-                if(indexbtn != -1){
-                    buttontab->buttons[indexbtn].callback(buttontab->buttons[indexbtn].arg);
-                    count = 0;
+                *indexbtn = isinbutton(event.button.x, event.button.y, buttontab);
+                if(*indexbtn != -1){
+                    buttontab->buttons[*indexbtn].callback(buttontab->buttons[*indexbtn].arg);
+                    *count = 0;
                 }
                 break;
-        
-        default:
-            break;
+
+            default:
+                break;
         }
-    }
 }
 
 void updatechar(char toupdate, int index){
