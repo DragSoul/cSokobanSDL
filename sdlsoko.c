@@ -159,6 +159,8 @@ void menu(allbutton *buttontab, font * ftt){
                     buttontab->buttons[indexbtn].callback(buttontab->buttons[indexbtn].arg);
                     count = 0;
                 }
+
+
         
                 /*//bouton play (je gruge un peu avec les pixels)
                 if(event.button.y > 364 && event.button.y < 419
@@ -196,8 +198,19 @@ void freeImg(){
     }
 }
 
-void printnth(void* nothing){
+void play(void* nothing){
     printf("nothing\n");
+    FILE *flot = fopen("niveau1", "r");
+    if(flot == NULL){
+        printf("pb ouverture fichier en lecture\n");
+        exit(1);
+    }
+    creationniveau(flot);
+    fclose(flot);
+}
+
+void selecLvl(void* nothing){
+    printf("ajkbfhksbhkfbz\n");
 }
 
 void dsiplaybtn(allbutton *allb, SDL_Surface *ecran, font *ftt){
@@ -223,14 +236,30 @@ void graphic(){
     allb.buttons = b;
 
     //btn pos
-    SDL_Rect rectbtn;
-    rectbtn.x = 124;
-    rectbtn.y = 364;
-    rectbtn.w = 257;
-    rectbtn.h = 55;
+    SDL_Rect rectbtnPlay;
+    rectbtnPlay.x = 124;
+    rectbtnPlay.y = 364;
+    rectbtnPlay.w = 257;
+    rectbtnPlay.h = 55;
+
+    //btn pos
+    SDL_Rect rectbtnSelec;
+    rectbtnSelec.x = 124;
+    rectbtnSelec.y = 421;
+    rectbtnSelec.w = 257;
+    rectbtnSelec.h = 55;
+
+    //btn pos
+    SDL_Rect rectbtnCharge;
+    rectbtnCharge.x = 124;
+    rectbtnCharge.y = 478;
+    rectbtnCharge.w = 257;
+    rectbtnCharge.h = 55;
 
     //add btn to allb
-    addbutton(&allb, &rectbtn, &printnth, NULL, "Play");
+    addbutton(&allb, &rectbtnPlay, &play, NULL, "Play");
+    addbutton(&allb, &rectbtnSelec, &selecLvl, NULL, "Level");
+    addbutton(&allb, &rectbtnCharge, &load, NULL, "Load");
 
     setupdatecharfunc(&updatechar);
     setupdatescreenfunc(&dessine);
@@ -246,19 +275,13 @@ void graphic(){
         fprintf(stderr, "Erreur VideoMode %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }
-    FILE *flot = fopen("niveau1", "r");
-    if(flot == NULL){
-        printf("pb ouverture fichier en lecture\n");
-        exit(1);
-    }
+    
     //printf("key repit : %d\n",SDL_EnableKeyRepeat(0, 0));
-
-    menu(&allb, ftt);
     // Légende de la fenêtre
     SDL_WM_SetCaption("Sokoban", NULL);
-    creationniveau(flot);
-    fclose(flot);
-    //load(); //commenter la création du lvl pour l'utiliser
+
+
+    menu(&allb, ftt);
     
     SDL_Flip(ecran);
     clockStart = clock();
