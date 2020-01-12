@@ -26,6 +26,7 @@ void loadImg(){
 }
 
 void boucleEv(font* ftt){
+    
     int cont = 1;
     point pos;
     pos = getposperso();
@@ -41,6 +42,7 @@ void boucleEv(font* ftt){
     destmove.x = 10;
     destmove.y = 40;
     nbMove = 0;
+    int keydown = 0;
     //fin display
 
     while(cont){
@@ -51,13 +53,20 @@ void boucleEv(font* ftt){
         displaystring(buftime, ecran, desttimer,ftt);
         sprintf(bufmove, "%d", nbMove);
         displaystring(bufmove, ecran, destmove,ftt);
+        SDL_UpdateRect(ecran, destmove.x, destmove.x, 100, 24);
+        SDL_UpdateRect(ecran, desttimer.x, desttimer.x, 100, 24);
+        //dessine();
         // fin display
 
-        SDL_WaitEvent(&event);
+        SDL_PollEvent(&event);
         switch(event.type){
             case SDL_QUIT:
                 cont = 0;
             case SDL_KEYDOWN:
+                if(keydown != 0){
+                    break;
+                }
+                keydown = 1;
                 switch(event.key.keysym.sym){
                     case SDLK_UP:
                         //y-1
@@ -103,6 +112,10 @@ void boucleEv(font* ftt){
                         cont = 0;
                         break;
                 }
+                break;
+            case SDL_KEYUP:
+                keydown = 0;
+                break;
         }
     }
 }
@@ -179,6 +192,7 @@ void graphic(){
         printf("pb ouverture fichier en lecture\n");
         exit(1);
     }
+    //printf("key repit : %d\n",SDL_EnableKeyRepeat(0, 0));
 
     menu();
     // Légende de la fenêtre

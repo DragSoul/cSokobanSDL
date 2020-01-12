@@ -40,6 +40,12 @@ font* readfontinfo(int size, char* filename, char* imagename){
 
 //affiche la chaine de caractère str dans la surface ecrant a la position dest avect la font ftt
 void displaystring(char *str, SDL_Surface *ecran, SDL_Rect dest, font* ftt){
+    SDL_Rect blackRect;
+    blackRect.w = strlen(str) * 22;
+    blackRect.h = 24;
+    blackRect.x = dest.x;
+    blackRect.y = dest.y;
+    SDL_FillRect(ecran, &blackRect, SDL_MapRGB(ecran->format,0,0,0));
     int coderblt;
     SDL_Rect tmprect;
     for(int i = 0; i < strlen(str); i++){
