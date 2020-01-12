@@ -43,7 +43,9 @@ void menu(allbutton *buttontab, font * ftt);
 void addallimg(int * index, char car, SDL_Surface *imgrect);
 void graphic();
 void dsiplaybtn(allbutton *allb, SDL_Surface *ecran, font *ftt);
-
+int isinbutton(int x, int y,allbutton *buttontab);
+void dsiplayonebtn(button btn, SDL_Surface *ecran, font *ftt, int r, int g, int b);
+int timer(int oldtime, int ms);
 
 
 //images utilisées

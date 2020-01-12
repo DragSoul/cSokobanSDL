@@ -40,6 +40,7 @@ font* readfontinfo(int size, char* filename, char* imagename){
 
 //affiche la chaine de caractère str dans la surface ecran a la position dest avec la font ftt
 void displaystring(char *str, SDL_Surface *ecran, SDL_Rect dest, font* ftt){
+    int spacing = 1;
     SDL_Rect blackRect;
     blackRect.w = strlen(str) * 22;
     blackRect.h = 24;
@@ -56,11 +57,12 @@ void displaystring(char *str, SDL_Surface *ecran, SDL_Rect dest, font* ftt){
                 tmprect.x = ftt->allfont[j].x;
                 tmprect.y = ftt->allfont[j].y;
                 coderblt = SDL_BlitSurface(ftt->fontimg, &tmprect, ecran, &dest);
-                dest.x += ftt->allfont[j].width;
+                dest.x += ftt->allfont[j].width + spacing;
                 if(coderblt != 0){
                     printf("pb blt font\n");
                 }
             }
+            
         }
     }
 }

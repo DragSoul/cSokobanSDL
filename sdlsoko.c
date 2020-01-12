@@ -44,12 +44,17 @@ void boucleEv(font* ftt){
     nbMove = 0;
     int keydown = 0;
     //fin display
-
+    int oldtime = SDL_GetTicks();
+    int time = 0;
+    printf("%d\n", oldtime);
     while(cont){
+
+        if(timer(oldtime, 1000)){
+            oldtime = SDL_GetTicks();
+            time += 1;
+        }
         //dispaly move and timer
-        clockEnd = clock();
-        extime = extime + (float) (clockEnd-clockStart)/CLOCKS_PER_SEC;
-        gcvt(extime, 6, buftime); 
+        sprintf(buftime, "time : %d s", time);
         displaystring(buftime, ecran, desttimer,ftt);
         sprintf(bufmove, "%d", nbMove);
         displaystring(bufmove, ecran, destmove,ftt);
@@ -130,10 +135,10 @@ void addbutton(allbutton *buttontab, SDL_Rect *rect, void(*callback)(void*), voi
     buttontab->len += 1;
 }
 
-int isinbutton(SDL_MouseButtonEvent btn,allbutton *buttontab){
+int isinbutton(int x, int y,allbutton *buttontab){
     for(int i = 0; i < buttontab->len; i++){
-        if(btn.y > buttontab->buttons[i].rect->y && btn.y < buttontab->buttons[i].rect->y + buttontab->buttons[i].rect->h
-                    && btn.x > buttontab->buttons[i].rect->x && buttontab->buttons[i].rect->x + buttontab->buttons[i].rect->w){
+        if(y > buttontab->buttons[i].rect->y && y < buttontab->buttons[i].rect->y + buttontab->buttons[i].rect->h
+                    && x > buttontab->buttons[i].rect->x && x < buttontab->buttons[i].rect->x + buttontab->buttons[i].rect->w){
             return i;
         }
     }
@@ -147,24 +152,29 @@ void menu(allbutton *buttontab, font * ftt){
     pos.x = 0;
     pos.y = 0;
     int indexbtn;
+    int tmpindexbtn;
     SDL_BlitSurface(allimage[0].img, NULL, ecran, &pos);
     dsiplaybtn(buttontab, ecran, ftt);
     SDL_Flip(ecran);
     while(count){
         SDL_WaitEvent(&event);
         switch (event.type){
+            case SDL_MOUSEMOTION:
+                indexbtn = isinbutton(event.motion.x, event.motion.y, buttontab);
+                if(indexbtn != -1){
+                    tmpindexbtn = indexbtn;
+                    dsiplayonebtn(buttontab->buttons[indexbtn], ecran, ftt, 120,120,120);
+                }else{
+                    dsiplayonebtn(buttontab->buttons[tmpindexbtn], ecran, ftt, 80,80,80);
+                }
+                dessine();
+                break;
             case SDL_MOUSEBUTTONUP:
-                indexbtn = isinbutton(event.button, buttontab);
+                indexbtn = isinbutton(event.button.x, event.button.y, buttontab);
                 if(indexbtn != -1){
                     buttontab->buttons[indexbtn].callback(buttontab->buttons[indexbtn].arg);
                     count = 0;
                 }
-        
-                /*//bouton play (je gruge un peu avec les pixels)
-                if(event.button.y > 364 && event.button.y < 419
-                && event.button.x > 124 && event.button.x < 381){
-                    count = 0; //si plusieurs boutons, faire de menu() la fonction qui fait les appel
-                }*/
                 break;
         
         default:
@@ -200,16 +210,21 @@ void printnth(void* nothing){
     printf("nothing\n");
 }
 
-void dsiplaybtn(allbutton *allb, SDL_Surface *ecran, font *ftt){
+void dsiplayonebtn(button btn, SDL_Surface *ecran, font *ftt, int r, int g, int b){
     SDL_Rect tmprect;
+    SDL_FillRect(ecran, btn.rect, SDL_MapRGB(ecran->format,r,g,b));
+    tmprect.x = btn.rect->x + 10;
+    tmprect.y = btn.rect->y + 10;
+    displaystring(btn.content, ecran, tmprect, ftt);
+}
 
+void dsiplaybtn(allbutton *allb, SDL_Surface *ecran, font *ftt){
     for(int i = 0; i < allb->len; i++){
-         SDL_FillRect(ecran, allb->buttons[i].rect, SDL_MapRGB(ecran->format,80,80,80));
-         tmprect.x = allb->buttons[i].rect->x + 10;
-         tmprect.y = allb->buttons[i].rect->y + 10;
-         displaystring(allb->buttons[i].content, ecran, tmprect, ftt);
+         dsiplayonebtn(allb->buttons[i], ecran, ftt,80,80,80);
     }
 }
+
+
 
 void graphic(){
     //int font
@@ -270,4 +285,12 @@ void graphic(){
     //free font
     freefont(ftt);
     SDL_Quit();
+}
+
+int timer(int oldtime, int ms){
+    int curenttime = SDL_GetTicks();
+    if(curenttime - oldtime > ms){
+        return 1;
+    }
+    return 0;
 }
