@@ -5,7 +5,7 @@ EXEC=sokoban
 
 all: $(EXEC)
 
-$(EXEC): main.o sdlsoko.o sokoban.o ncursessoko.o
+$(EXEC): main.o sdlsoko.o sokoban.o ncursessoko.o fontutils.o
 	$(CC) -o $@ $^ $(LDFLAGS) -lncurses -ltinfo -lSDL 
 
 %.o: %.c

@@ -1,5 +1,6 @@
 #include "sdlsoko.h"
 
+
 void addallimg(int * index, char car, SDL_Surface *imgrect){
     if(imgrect == NULL){
         printf("pas trouvé img\n");
@@ -24,12 +25,34 @@ void loadImg(){
     addallimg(&index, 's', SDL_LoadBMP("images/sol.bmp"));
 }
 
-void boucleEv(){
+void boucleEv(font* ftt){
     int cont = 1;
     point pos;
     pos = getposperso();
     SDL_Event event;
+
+    //display move and timer
+    char buftime[20]; 
+    char bufmove[10]; 
+    SDL_Rect desttimer;
+    desttimer.x = 10;
+    desttimer.y = 10;
+    SDL_Rect destmove;
+    destmove.x = 10;
+    destmove.y = 40;
+    nbMove = 0;
+    //fin display
+
     while(cont){
+        //dispaly move and timer
+        clockEnd = clock();
+        extime = extime + (float) (clockEnd-clockStart)/CLOCKS_PER_SEC;
+        gcvt(extime, 6, buftime); 
+        displaystring(buftime, ecran, desttimer,ftt);
+        sprintf(bufmove, "%d", nbMove);
+        displaystring(bufmove, ecran, destmove,ftt);
+        // fin display
+
         SDL_WaitEvent(&event);
         switch(event.type){
             case SDL_QUIT:
@@ -133,6 +156,10 @@ void freeImg(){
 }
 
 void graphic(){
+    //int font
+    font *ftt;
+    ftt = readfontinfo(220, "images/font.fnt","images/font_0.bmp");
+
     setupdatecharfunc(&updatechar);
     setupdatescreenfunc(&dessine);
     loadImg();
@@ -159,13 +186,15 @@ void graphic(){
     creationniveau(flot);
     fclose(flot);
     //load(); //commenter la création du lvl pour l'utiliser
+    
     SDL_Flip(ecran);
-
     clockStart = clock();
-    boucleEv();
+    boucleEv(ftt);
     clockEnd = clock();
     extime = extime + (float) (clockEnd-clockStart)/CLOCKS_PER_SEC; //seconde
     printf("time : %f\nnb Moves : %d\n", extime, nbMove);
     freeImg();
+    //free font
+    freefont(ftt);
     SDL_Quit();
 }

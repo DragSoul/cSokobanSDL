@@ -13,10 +13,11 @@
 #include <pthread.h>
 #include <SDL/SDL_types.h>
 #include <SDL/SDL_timer.h>
+#include "fontutils.h"
 #include "sokoban.h"
 
 void loadImg();
-void boucleEv();
+void boucleEv(font *ftt);
 void updatechar(char toupdate, int index);
 void dessine();
 void freeImg();
