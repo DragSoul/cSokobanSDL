@@ -18,7 +18,7 @@ void creationniveau(FILE *flot){
         if(c != '\n'){
             tabNiveau[i*N + j] = c;
             updatecharfunc(c, (i*N + j));
-            if(c == '@'){
+            if(c == PERS){
                 pos.y = (i*N + j) / N;
                 pos.x = (i*N + j) - (pos.y * N);
                 setposperso(pos);
@@ -91,18 +91,18 @@ void restart(int lv){
 }
 
 void movecaisse(int indexmove2, int x, int y){
-    if(tabNiveau[indexmove2] == 's'){
-        tabNiveau[indexmove2] = '$';
-        updatecharfunc('$', indexmove2);
+    if(tabNiveau[indexmove2] == SOL){
+        tabNiveau[indexmove2] = CAISSE;
+        updatecharfunc(CAISSE, indexmove2);
     }
     else{
-        tabNiveau[indexmove2] = '*';
-        updatecharfunc('*', indexmove2);
+        tabNiveau[indexmove2] = CAISSECIBLE;
+        updatecharfunc(CAISSECIBLE, indexmove2);
     }
 }
 
 int canMoveCaisse(int indexmove2){
-    return tabNiveau[indexmove2] != '#' && tabNiveau[indexmove2] != '$' && tabNiveau[indexmove2] != '*';
+    return tabNiveau[indexmove2] != MUR && tabNiveau[indexmove2] != CAISSE && tabNiveau[indexmove2] != CAISSECIBLE;
 }
 
 void movesoko(point *pos, int x, int y){
@@ -111,30 +111,30 @@ void movesoko(point *pos, int x, int y){
     int indexmove2 = ((pos->y)+(2*y))*N + (pos->x)+(2*x);
     switch(tabNiveau[indexmove1]){
         //mur
-        case '#':
+        case MUR:
             break;
         //caisse1
-        case '$':
+        case CAISSE:
             if(canMoveCaisse(indexmove2)){
                 //move caisse
                 movecaisse(indexmove2, x, y);
-                moveperso(pos,x,y,'@');
+                moveperso(pos,x,y,PERS);
             }
             break;
         //caisse2
-        case '*':
+        case CAISSECIBLE:
             if(canMoveCaisse(indexmove2)){
                 movecaisse(indexmove2,x,y);
-                moveperso(pos,x,y,'+');
+                moveperso(pos,x,y,PERSCIBLE);
             }
             break;
         //dest
-        case '.':
-            moveperso(pos,x,y,'+');
+        case SOLCIBLE:
+            moveperso(pos,x,y,PERSCIBLE);
             break;
 
-        case 's':
-            moveperso(pos,x,y,'@');
+        case SOL:
+            moveperso(pos,x,y,PERS);
             break;
     }
 }
@@ -143,13 +143,13 @@ void moveperso(point *pos, int x, int y, char movenext){
     nbMove++;
     int curentindex = (pos->y)*N + (pos->x);
     int indexmove1 = ((pos->y)+y)*N + (pos->x)+x;
-    if(tabNiveau[curentindex] == '+'){
-        tabNiveau[curentindex] = '.';
-        updatecharfunc('.', curentindex);
+    if(tabNiveau[curentindex] == PERSCIBLE){
+        tabNiveau[curentindex] = SOLCIBLE;
+        updatecharfunc(SOLCIBLE, curentindex);
     }
     else{
-        tabNiveau[curentindex] = 's';
-        updatecharfunc('s', curentindex);
+        tabNiveau[curentindex] = SOL;
+        updatecharfunc(SOL, curentindex);
     }
     tabNiveau[indexmove1] = movenext;
     pos->x += x;
@@ -160,7 +160,7 @@ void moveperso(point *pos, int x, int y, char movenext){
 
 int win(){
     for(int i = 0; i < 110; i++){
-        if(tabNiveau[i] == '$'){
+        if(tabNiveau[i] == CAISSE){
             return 1;
         } 
     }

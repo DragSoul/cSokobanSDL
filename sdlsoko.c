@@ -15,14 +15,14 @@ void addallimg(int * index, char car, SDL_Surface *imgrect){
 
 void loadImg(){
     int index = 0;
-    addallimg(&index, 'm', SDL_LoadBMP("images/menu.bmp"));
-    addallimg(&index, '@', SDL_LoadBMP("images/joseph_pixel.bmp"));
-    addallimg(&index, '$', SDL_LoadBMP("images/caisse.bmp"));
-    addallimg(&index, '*', SDL_LoadBMP("images/caissesombre.bmp"));
-    addallimg(&index, '.', SDL_LoadBMP("images/solcible.bmp"));
-    addallimg(&index, '+', SDL_LoadBMP("images/joseph_cible.bmp"));
-    addallimg(&index, '#', SDL_LoadBMP("images/mur.bmp"));
-    addallimg(&index, 's', SDL_LoadBMP("images/sol.bmp"));
+    addallimg(&index, MUR, SDL_LoadBMP("images/menu.bmp"));
+    addallimg(&index, PERS, SDL_LoadBMP("images/joseph_pixel.bmp"));
+    addallimg(&index, CAISSE, SDL_LoadBMP("images/caisse.bmp"));
+    addallimg(&index, CAISSECIBLE, SDL_LoadBMP("images/caissesombre.bmp"));
+    addallimg(&index, SOLCIBLE, SDL_LoadBMP("images/solcible.bmp"));
+    addallimg(&index, PERSCIBLE, SDL_LoadBMP("images/joseph_cible.bmp"));
+    addallimg(&index, MUR, SDL_LoadBMP("images/mur.bmp"));
+    addallimg(&index, SOL, SDL_LoadBMP("images/sol.bmp"));
 }
 
 void boucleEv(font* ftt){

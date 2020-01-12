@@ -6,6 +6,16 @@
 #define HEIGHT 11*LC
 #define N 11
 
+#define MENU 'm'
+#define PERS '@'
+#define PERSCIBLE '+'
+#define SOL 's'
+#define SOLCIBLE '.'
+#define MUR '#'
+#define CAISSE '$'
+#define CAISSECIBLE '*'
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
