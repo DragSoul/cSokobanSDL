@@ -206,19 +206,8 @@ void freeImg(){
     }
 }
 
-void play(void* nothing){
+void printnth(void* nothing){
     printf("nothing\n");
-    FILE *flot = fopen("niveau1", "r");
-    if(flot == NULL){
-        printf("pb ouverture fichier en lecture\n");
-        exit(1);
-    }
-    creationniveau(flot);
-    fclose(flot);
-}
-
-void selecLvl(void* nothing){
-    printf("ajkbfhksbhkfbz\n");
 }
 
 void dsiplayonebtn(button btn, SDL_Surface *ecran, font *ftt, int r, int g, int b){
@@ -234,7 +223,20 @@ void dsiplaybtn(allbutton *allb, SDL_Surface *ecran, font *ftt){
          dsiplayonebtn(allb->buttons[i], ecran, ftt,80,80,80);
     }
 }
+void play(void* nothing){
+    printf("nothing\n");
+    FILE *flot = fopen("niveau1", "r");
+    if(flot == NULL){
+        printf("pb ouverture fichier en lecture\n");
+        exit(1);
+    }
+    creationniveau(flot);
+    fclose(flot);
+}
 
+void selecLvl(void* nothing){
+    printf("ajkbfhksbhkfbz\n");
+}
 
 
 void graphic(){
@@ -288,13 +290,19 @@ void graphic(){
         fprintf(stderr, "Erreur VideoMode %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }
-    
+    FILE *flot = fopen("niveau1", "r");
+    if(flot == NULL){
+        printf("pb ouverture fichier en lecture\n");
+        exit(1);
+    }
     //printf("key repit : %d\n",SDL_EnableKeyRepeat(0, 0));
-    // Légende de la fenêtre
-    SDL_WM_SetCaption("Sokoban", NULL);
-
 
     menu(&allb, ftt);
+    // Légende de la fenêtre
+    SDL_WM_SetCaption("Sokoban", NULL);
+    creationniveau(flot);
+    fclose(flot);
+    //load(); //commenter la création du lvl pour l'utiliser
     
     SDL_Flip(ecran);
     clockStart = clock();
