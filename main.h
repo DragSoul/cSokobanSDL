@@ -19,7 +19,5 @@
 #include "ncursessoko.h"
 
 int main(int argc, char ** argv);
-void graphic();
-void console();
 
 #endif

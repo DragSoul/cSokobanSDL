@@ -99,6 +99,7 @@ void restart(Game *g, int lv){
     }
     creationniveau(g, flot);
     fclose(flot);
+    g->curentlvl = lv;
 }
 
 

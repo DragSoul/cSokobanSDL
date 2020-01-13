@@ -50,10 +50,9 @@ void boucleEv(Game *g, font* ftt){
     destmove.x = 10;
     destmove.y = 40;
     int keydown = 0;
-    //fin display
+    //end display
     int oldtime = SDL_GetTicks();
     int time = 0;
-    printf("%d\n", oldtime);
     while(cont){
 
         if(timer(oldtime, 1000)){
@@ -128,16 +127,15 @@ void boucleEv(Game *g, font* ftt){
         }
         if(g->badcaisse == 0){
             endLvl(g, ftt);
+            time = 0;
             if(g->curentlvl == 2){
                 cont = 0;
             }else{
-                g->curentlvl +=1;
-                restart(g,g->curentlvl);
+                restart(g,g->curentlvl + 1);
             }
         }
     }
 }
-
 
 void endLvl(Game *g, font *ftt){
     g->clockEnd = clock();
@@ -194,7 +192,6 @@ void menu(allbutton *buttontab, font * ftt){
     }
 }
 
-
 void EventMouseButton(SDL_Event event, font *ftt, int *count, allbutton *buttontab, int *indexbtn, int *tmpindexbtn){
     switch (event.type){
             case SDL_MOUSEMOTION:
@@ -239,18 +236,15 @@ void updatechar(char toupdate, int index){
     }
 }
 
-
 void dessine(char tabNiveau[]){//ça sert à rien du coup
     SDL_Flip(ecran);
 }
-
 
 void freeImg(){
     for(int i = 0; i<8; i++){
         SDL_FreeSurface(allimage[i].img);
     }
 }
-
 
 void displayonebtn(button btn, SDL_Surface *ecran, font *ftt, int r, int g, int b){
     SDL_Rect tmprect;
@@ -260,36 +254,89 @@ void displayonebtn(button btn, SDL_Surface *ecran, font *ftt, int r, int g, int 
     displaystring(btn.content, ecran, tmprect, ftt);
 }
 
-
 void displaybtn(allbutton *allb, SDL_Surface *ecran, font *ftt){
     for(int i = 0; i < allb->len; i++){
          displayonebtn(allb->buttons[i], ecran, ftt,80,80,80);
     }
 }
 
-
-void play(void* game){
-    printf("nothing\n");
+void play(void* ftt){
+    Game game;
+    initGame(&game, &updatechar, &dessine);
+    createtablvl(&game,110);
     FILE *flot = fopen("niveau0", "r");
     if(flot == NULL){
         printf("pb ouverture fichier en lecture\n");
         exit(1);
     }
-    creationniveau((Game*)game, flot);
-    ((Game*)game)->curentlvl = 0;
+    creationniveau(&game, flot);
+    game.curentlvl = 0;
     fclose(flot);
+    boucleEv(&game,ftt);
 }
 
-
-void selecLvl(void* nothing){
-    printf("ajkbfhksbhkfbz\n");
+void playlvl(void* fttwlvl){
+    Game game;
+    initGame(&game, &updatechar, &dessine);
+    createtablvl(&game,110);
+    restart(&game, ((FontWlvl*)fttwlvl)->lvl);
+    boucleEv(&game,((FontWlvl*)fttwlvl)->ftt);
 }
 
+void selecLvl(void* ftt){
 
-void loadlvl(void* game){
-    load((Game*)game);
+    button b[20];
+    allbutton allb;
+    allb.len = 0;
+    allb.buttons = b;
+
+    SDL_Rect rectbtnPlay0;
+    initrect(&rectbtnPlay0, 124,364,257,55);
+
+    //btn pos
+    SDL_Rect rectbtnPlay1;
+    initrect(&rectbtnPlay1, 124,421,257,55);
+
+    //btn pos
+    SDL_Rect rectbtnPlay2;
+    initrect(&rectbtnPlay2, 124,478,257,55);
+
+    FontWlvl ft[3];
+    for(int i = 0; i <3 ; i++){
+        ft[i].ftt = (font*)ftt;
+        ft[i].lvl = i;
+    }
+
+    addbutton(&allb, &rectbtnPlay0, &playlvl, (void*)&ft[0], "Play 0");
+    addbutton(&allb, &rectbtnPlay1, &playlvl, (void*)&ft[1], "Play 1");
+    addbutton(&allb, &rectbtnPlay2, &playlvl, (void*)&ft[2], "Play 2");
+
+    int count = 1;
+    SDL_Event event;
+    SDL_Rect pos;
+    pos.x = 0;
+    pos.y = 0;
+    int indexbtn;
+    int tmpindexbtn = -1;
+    SDL_BlitSurface(allimage[0].img, NULL, ecran, &pos);
+    displaybtn(&allb, ecran, (font*)ftt);
+    SDL_Flip(ecran);
+    while(count){
+        SDL_WaitEvent(&event);
+        if(event.type == SDL_QUIT){
+            exit(0);
+        }
+        EventMouseButton(event, (font*)ftt, &count, &allb,&indexbtn, &tmpindexbtn);
+    }
 }
 
+void loadlvl(void* ftt){
+    Game game;
+    initGame(&game, &updatechar, &dessine);
+    createtablvl(&game,110);
+    load(&game);
+    boucleEv(&game,ftt);
+}
 
 void initrect(SDL_Rect *rect, int x, int y, int w, int h){
     rect->x = x;
@@ -298,11 +345,7 @@ void initrect(SDL_Rect *rect, int x, int y, int w, int h){
     rect->h = h;
 }
 
-
 void graphic(){
-    Game game;
-    initGame(&game, &updatechar, &dessine);
-
     //int font
     font *ftt;
     ftt = readfontinfo(220, "images/font.fnt","images/font_0.bmp");
@@ -326,13 +369,13 @@ void graphic(){
     initrect(&rectbtnCharge, 124,478,257,55);
 
     //add btn to allb
-    addbutton(&allb, &rectbtnPlay, &play, (void*)&game, "Play");
-    addbutton(&allb, &rectbtnSelec, &selecLvl, NULL, "Level");
-    addbutton(&allb, &rectbtnCharge, &loadlvl, (void*)&game, "Load");
+    addbutton(&allb, &rectbtnPlay, &play, (void*)ftt, "Play");
+    addbutton(&allb, &rectbtnSelec, &selecLvl, (void*)ftt, "Level");
+    addbutton(&allb, &rectbtnCharge, &loadlvl, (void*)ftt, "Load");
 
     loadImg();
     srand(time(NULL));
-    createtablvl(&game,110);
+    //createtablvl(&game,110);
     // Init
     if(SDL_Init(SDL_INIT_VIDEO) != 0){
         fprintf(stderr,"\nUnable to initialize SDL: %s\n", SDL_GetError());
@@ -347,16 +390,8 @@ void graphic(){
 
     // Légende de la fenêtre
     SDL_WM_SetCaption("Sokoban", NULL);
-
-    //load(); //commenter la création du lvl pour l'utiliser
     
     SDL_Flip(ecran);
-    game.clockStart = clock();
-    boucleEv(&game,ftt);
-    game.clockEnd = clock();
-    game.extime = game.extime + (float) (game.clockEnd-game.clockStart)/CLOCKS_PER_SEC; //seconde
-    int superscore = score(&game);
-    printf("time : %f\nnb Moves : %d, score : %d\n", game.extime, game.nbMove, superscore);
     freeImg();
 
     //free font
@@ -364,7 +399,6 @@ void graphic(){
 
     SDL_Quit();
 }
-
 
 int timer(int oldtime, int ms){
     int curenttime = SDL_GetTicks();

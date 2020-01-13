@@ -27,6 +27,13 @@
 #include "fontutils.h"
 #include "sokoban.h"
 
+typedef struct
+{
+    font * ftt;
+    int lvl;
+}FontWlvl;
+
+
 typedef struct{
     SDL_Rect *rect;
     void(*callback)(void*);
@@ -160,21 +167,21 @@ void displayonebtn(button btn, SDL_Surface *ecran, font *ftt, int r, int g, int 
 
 /**
  * \fn int timer(int oldtime, int ms)
- * \brief fonction qui compte les secondes
+ * \brief fonction qui compte les milisecondes
  * 
- * \param oldtime 
- * \param ms 
+ * \param oldtime temps référend
+ * \param ms milisecond a compter
  * 
  */
 int timer(int oldtime, int ms);
 
 /**
  * \fn void selecLvl(void* nothing)
- * \brief lance l'écran de sélection des niveaux (not implemented)
- * 
+ * \brief lance l'écran de sélection des niveaux
+ * \param ftt pointeur sur une font (font*)
  * 
  */
-void selecLvl(void* nothing);
+void selecLvl(void* ftt);
 
 /**
  * \fn void EventMouseButton(SDL_Event event, font *ftt, int *count, allbutton *buttontab, int *indexbtn, int *tmpindexbtn)
@@ -232,6 +239,8 @@ void endLvl(Game *g, font *ftt);
  * 
  */
 void play(void* game);
+
+void playlvl(void* fttwlvl);
 
 //images utilisées
 charimg allimage[8];
