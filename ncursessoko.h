@@ -9,8 +9,8 @@
 void updateshell(char toudate, int index);
 void shelldisplaychar(char todisplay);
 void initcolors();
-void dessineshell();
-void boucleshell();
+void dessineshell(char tabNiveau[]);
+void boucleshell(Game *g);
 void console();
 
 #endif

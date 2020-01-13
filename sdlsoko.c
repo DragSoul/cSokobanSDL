@@ -75,30 +75,30 @@ void boucleEv(Game *g, font* ftt){
                     case SDLK_UP:
                         //y-1
                         movesoko(g,&pos,0,-1);
-                        cont = win(g->tabNiveau);
+                        //cont = win(g->tabNiveau);
                         break;
 
                     case SDLK_DOWN:
                         //y+1
                         movesoko(g,&pos,0,1);
-                        cont = win(g->tabNiveau);
+                        //cont = win(g->tabNiveau);
                         break;
 
                     case SDLK_LEFT:
                         //x-1
                         movesoko(g,&pos,-1,0);
-                        cont = win(g->tabNiveau);
+                        //cont = win(g->tabNiveau);
                         break;
 
                     case SDLK_RIGHT:
                         //x+1
                         movesoko(g,&pos,1,0);
-                        cont = win(g->tabNiveau);
+                        //cont = win(g->tabNiveau);
                         break;
 
                     case 'r':
                         //restart level
-                        restart(g,1);
+                        restart(g,g->curentlvl);
                         pos = g->posperso;
                         break;
 
@@ -124,6 +124,25 @@ void boucleEv(Game *g, font* ftt){
                 break;
             default:
                 break;
+        }
+        if(g->badcaisse == 0){
+            g->clockEnd = clock();
+                g->extime = g->extime + (float) (g->clockEnd-g->clockStart)/CLOCKS_PER_SEC; //seconde
+                char bufscore[40];
+                sprintf(bufscore, "lvl : %d score : %d", g->curentlvl, score(g));
+                SDL_Rect posScore;
+                initrect(&posScore, 300,200, 100,24);
+                displaystring(bufscore, ecran, posScore, ftt);
+                SDL_Flip(ecran);
+                SDL_Delay(1000);
+            if(g->curentlvl == 2){
+                cont = 0;
+            }else{
+                g->curentlvl +=1;
+                restart(g,g->curentlvl);
+                pos = g->posperso;
+            }
+            
         }
     }
 }
@@ -240,12 +259,13 @@ void dsiplaybtn(allbutton *allb, SDL_Surface *ecran, font *ftt){
 }
 void play(void* game){
     printf("nothing\n");
-    FILE *flot = fopen("niveau1", "r");
+    FILE *flot = fopen("niveau0", "r");
     if(flot == NULL){
         printf("pb ouverture fichier en lecture\n");
         exit(1);
     }
     creationniveau((Game*)game, flot);
+    ((Game*)game)->curentlvl = 0;
     fclose(flot);
 }
 
@@ -253,13 +273,16 @@ void selecLvl(void* nothing){
     printf("ajkbfhksbhkfbz\n");
 }
 
+void initrect(SDL_Rect *rect, int x, int y, int w, int h){
+    rect->x = x;
+    rect->y = y;
+    rect->w = w;
+    rect->h = h;
+}
 
 void graphic(){
     Game game;
-    game.extime = 0;
-    game.nbMove =0;
-    game.updatecharfunc = &updatechar;
-    game.updatescreen = &dessine;
+    initGame(&game, &updatechar, &dessine);
     //int font
     font *ftt;
     ftt = readfontinfo(220, "images/font.fnt","images/font_0.bmp");
@@ -272,24 +295,15 @@ void graphic(){
 
     //btn pos
     SDL_Rect rectbtnPlay;
-    rectbtnPlay.x = 124;
-    rectbtnPlay.y = 364;
-    rectbtnPlay.w = 257;
-    rectbtnPlay.h = 55;
+    initrect(&rectbtnPlay, 124,364,257,55);
 
     //btn pos
     SDL_Rect rectbtnSelec;
-    rectbtnSelec.x = 124;
-    rectbtnSelec.y = 421;
-    rectbtnSelec.w = 257;
-    rectbtnSelec.h = 55;
+    initrect(&rectbtnSelec, 124,421,257,55);
 
     //btn pos
     SDL_Rect rectbtnCharge;
-    rectbtnCharge.x = 124;
-    rectbtnCharge.y = 478;
-    rectbtnCharge.w = 257;
-    rectbtnCharge.h = 55;
+    initrect(&rectbtnCharge, 124,478,257,55);
 
     //add btn to allb
     addbutton(&allb, &rectbtnPlay, &play, (void*)&game, "Play");
@@ -308,18 +322,18 @@ void graphic(){
         fprintf(stderr, "Erreur VideoMode %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }
-    FILE *flot = fopen("niveau1", "r");
+    /*FILE *flot = fopen("niveau1", "r");
     if(flot == NULL){
         printf("pb ouverture fichier en lecture\n");
         exit(1);
-    }
+    }*/
     //printf("key repit : %d\n",SDL_EnableKeyRepeat(0, 0));
 
     menu(&allb, ftt);
     // Légende de la fenêtre
     SDL_WM_SetCaption("Sokoban", NULL);
-    creationniveau(&game, flot);
-    fclose(flot);
+    //creationniveau(&game, flot);
+    //fclose(flot);
     //load(); //commenter la création du lvl pour l'utiliser
     
     SDL_Flip(ecran);
@@ -327,7 +341,8 @@ void graphic(){
     boucleEv(&game,ftt);
     game.clockEnd = clock();
     game.extime = game.extime + (float) (game.clockEnd-game.clockStart)/CLOCKS_PER_SEC; //seconde
-    printf("time : %f\nnb Moves : %d\n", game.extime, game.nbMove);
+    int superscore = score(&game);
+    printf("time : %f\nnb Moves : %d, score : %d\n", game.extime, game.nbMove, superscore);
     freeImg();
     //free font
     freefont(ftt);

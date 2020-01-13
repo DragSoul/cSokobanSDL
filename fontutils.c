@@ -55,7 +55,7 @@ void displaystring(char *str, SDL_Surface *ecran, SDL_Rect dest, font* ftt){
                 tmprect.h = ftt->allfont[j].height;
                 tmprect.w = ftt->allfont[j].width;
                 tmprect.x = ftt->allfont[j].x;
-                tmprect.y = ftt->allfont[j].y;
+                tmprect.y = ftt->allfont[j].y;                
                 coderblt = SDL_BlitSurface(ftt->fontimg, &tmprect, ecran, &dest);
                 dest.x += ftt->allfont[j].width + spacing;
                 if(coderblt != 0){
@@ -72,3 +72,4 @@ void freefont(font *ftt){
     free(ftt->allfont);
     free(ftt);
 }
+

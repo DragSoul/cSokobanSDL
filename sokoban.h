@@ -39,6 +39,8 @@ typedef struct
     int nbMove;
     void (*updatecharfunc)(char,int);
     void (*updatescreen)(char*);
+    int badcaisse;
+    int curentlvl;
 }Game;
 
 void creationniveau(Game *g, FILE *flot);
@@ -53,6 +55,10 @@ int contient(char tab[], int n, char c);
 int win(char tabNiveau[]);
 void affichetab(char tab[]);
 void createtablvl(Game *g, int n);
+void initGame(Game *g, void (*updatecharfunc)(char,int), void (*updatescreen)(char*));
+void callGameUpdateScreen(Game *g);
+void callGameUpdateChar(Game *g, char movenext, int indexmove1);
+int score(Game *g);
 
 
 

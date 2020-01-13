@@ -47,6 +47,7 @@ int isinbutton(int x, int y,allbutton *buttontab);
 void dsiplayonebtn(button btn, SDL_Surface *ecran, font *ftt, int r, int g, int b);
 int timer(int oldtime, int ms);
 void EventMouseButton(SDL_Event event, font *ftt, int *count, allbutton *buttontab, int *indexbtn, int *tmpindexbtn);
+void initrect(SDL_Rect *rect, int x, int y, int w, int h);
 
 //images utilisées
 charimg allimage[8];

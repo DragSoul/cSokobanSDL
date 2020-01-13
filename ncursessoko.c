@@ -133,7 +133,6 @@ void console(){
 
     creationniveau(&game, flot);
     fclose(flot);
-    printf("coucou\n");
     game.clockStart = clock();
     boucleshell(&game);
     game.clockEnd = clock();

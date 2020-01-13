@@ -4,14 +4,26 @@ void createtablvl(Game *g, int n){
     g->tabNiveau = malloc(sizeof(char)*(n));
 }
 
+void initGame(Game *g, void (*updatecharfunc)(char,int), void (*updatescreen)(char*)){
+    g->nbMove = 0;
+    g->extime = 0;
+    g->updatecharfunc = updatecharfunc;
+    g->updatescreen = updatescreen;
+    g->badcaisse = 0;
+    g->curentlvl = 0;
+}
+
 //création d'un tableau pour avoir le niveau en mémoire
 void creationniveau(Game *g, FILE *flot){
     char c;
     int i = 0, j = 0;
     point pos;
-    
+    g->badcaisse = 0;
     while((c = fgetc(flot)) != EOF){
         if(c != '\n'){
+            if(c == CAISSE){
+                g->badcaisse += 1;
+            }
             g->tabNiveau[i*N + j] = c;
             g->updatecharfunc(c, (i*N + j));
             if(c == PERS){
@@ -26,7 +38,7 @@ void creationniveau(Game *g, FILE *flot){
             j = 0;
         }
     }
-    g->updatescreen(g->tabNiveau);
+    callGameUpdateScreen(g);
 }
 
 //appuie sur s pour sauvegarder le niveau
@@ -63,6 +75,9 @@ void load(Game *g){
 
 //recherge un niveau
 void restart(Game *g, int lv){
+    g->clockStart = clock();
+    g->nbMove = 0;
+    g->extime = 0;
     char filename[8];
     sprintf(filename, "niveau%d", lv);
     FILE *flot = fopen(filename, "r");
@@ -77,11 +92,12 @@ void restart(Game *g, int lv){
 void movecaisse(Game *g, int indexmove2, int x, int y){
     if(g->tabNiveau[indexmove2] == SOL){
         g->tabNiveau[indexmove2] = CAISSE;
-        g->updatecharfunc(CAISSE, indexmove2);
+        callGameUpdateChar(g, CAISSE, indexmove2);
     }
     else{
         g->tabNiveau[indexmove2] = CAISSECIBLE;
-        g->updatecharfunc(CAISSECIBLE, indexmove2);
+        g->badcaisse -=1;
+        callGameUpdateChar(g, CAISSECIBLE, indexmove2);
     }
 }
 
@@ -108,6 +124,7 @@ void movesoko(Game *g, point *pos, int x, int y){
         case CAISSECIBLE:
             if(canMoveCaisse(g->tabNiveau, indexmove2)){
                 movecaisse(g, indexmove2,x,y);
+                g->badcaisse +=1;
                 moveperso(g,pos,x,y,PERSCIBLE);
             }
             break;
@@ -128,17 +145,33 @@ void moveperso(Game *g, point *pos, int x, int y, char movenext){
     int indexmove1 = ((pos->y)+y)*N + (pos->x)+x;
     if(g->tabNiveau[curentindex] == PERSCIBLE){
         g->tabNiveau[curentindex] = SOLCIBLE;
-        g->updatecharfunc(SOLCIBLE, curentindex);
+        callGameUpdateChar(g, SOLCIBLE, curentindex);
     }
     else{
         g->tabNiveau[curentindex] = SOL;
-        g->updatecharfunc(SOL, curentindex);
+        callGameUpdateChar(g, SOL, curentindex);
     }
     g->tabNiveau[indexmove1] = movenext;
     pos->x += x;
     pos->y += y;
-    g->updatecharfunc(movenext, indexmove1);
-    g->updatescreen(g->tabNiveau);
+    if(g->updatecharfunc != NULL){
+        callGameUpdateChar(g, movenext, indexmove1);
+    }
+    if(g->updatescreen != NULL){
+        callGameUpdateScreen(g);
+    }
+}
+
+void callGameUpdateScreen(Game *g){
+    if(g->updatescreen != NULL){
+        g->updatescreen(g->tabNiveau);
+    }
+}
+
+void callGameUpdateChar(Game *g, char movenext, int indexmove1){
+    if(g->updatecharfunc != NULL){
+        g->updatecharfunc(movenext, indexmove1);
+    }
 }
 
 int win(char tabNiveau[]){
@@ -157,4 +190,16 @@ void affichetab(char tab[]){
         }
         printf("\n");
     }
+}
+
+int score(Game *g){
+    if(g->badcaisse != 0){
+        return 0;
+    }
+    int res = 9999;
+    res = res - (int)(g->extime * g->nbMove * 10);
+    if(res > 0){
+        return res;
+    }
+    return 0;
 }
