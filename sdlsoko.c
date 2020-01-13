@@ -11,15 +11,6 @@
 
 #include "sdlsoko.h"
 
-
-/**
- * \fn void addallimg(int * index, char car, SDL_Surface *imgrect)
- * \brief Fonction qui ajoute une image utilisée par le programme en mémoire
- * 
- * \param index index de l'image dans le tableau
- * \param car caractère utilisé pour l'image
- * \param imgrect image
- */
 void addallimg(int * index, char car, SDL_Surface *imgrect){
     if(imgrect == NULL){
         printf("pas trouvé img\n");
@@ -32,11 +23,7 @@ void addallimg(int * index, char car, SDL_Surface *imgrect){
     *index  = *index +1;
 }
 
-/**
- * \fn void loadImg()
- * \brief Fonction qui ajoute toutes les images utilisées par le programme en mémoire
- * 
- */
+
 void loadImg(){
     int index = 0;
     addallimg(&index, MUR, SDL_LoadBMP("images/menu.bmp"));
@@ -49,14 +36,6 @@ void loadImg(){
     addallimg(&index, SOL, SDL_LoadBMP("images/sol.bmp"));
 }
 
-
-/**
- * \fn void boucleEv(Game *g, font* ftt)
- * \brief boucle du jeu
- * 
- * \param g pointeur sur une structure Game
- * \param ftt contient des caractère afin de pouvoir écrire avec la sdl
- */
 void boucleEv(Game *g, font* ftt){
     
     int cont = 1;
@@ -160,13 +139,6 @@ void boucleEv(Game *g, font* ftt){
 }
 
 
-/**
- * \fn void endLvl(Game *g, font *ftt)
- * \brief fonction de fin de niveau (calcul et affichage du score)
- * 
- * \param g pointeur sur une structure Game
- * \param ftt contient des caractère afin de pouvoir écrire avec la sdl
- */
 void endLvl(Game *g, font *ftt){
     g->clockEnd = clock();
     g->extime = g->extime + (float) (g->clockEnd-g->clockStart)/CLOCKS_PER_SEC; //seconde
@@ -180,16 +152,6 @@ void endLvl(Game *g, font *ftt){
 }
 
 
-/**
- * \fn void addbutton(allbutton *buttontab, SDL_Rect *rect, void(*callback)(void*), void* arg, char* strcontent)
- * \brief fonction permettant de créer des boutons en sdl
- * 
- * \param buttontab pointeur sur structure allbutton
- * \param rect pointeur sur structure SDL_Rect, notre bouton
- * \param callback pointeur sur fonction, permet de lier une fonction à un bouton
- * \param arg argument pris par callback
- * \param strcontent contenu du bouton
- */
 void addbutton(allbutton *buttontab, SDL_Rect *rect, void(*callback)(void*), void* arg, char* strcontent){
     button b;
     b.callback = callback;
@@ -201,14 +163,6 @@ void addbutton(allbutton *buttontab, SDL_Rect *rect, void(*callback)(void*), voi
 }
 
 
-/**
- * \fn int isinbutton(int x, int y,allbutton *buttontab)
- * \brief vérifie sur quel bouton on click
- * 
- * \param x coordonnée x de l'endroit où on a clické
- * \param y coordonnée y de l'endroit où on a clické
- * \param buttontab pointeur sur structure allbutton
- */
 int isinbutton(int x, int y,allbutton *buttontab){
     for(int i = 0; i < buttontab->len; i++){
         if(y > buttontab->buttons[i].rect->y && y < buttontab->buttons[i].rect->y + buttontab->buttons[i].rect->h
@@ -220,13 +174,6 @@ int isinbutton(int x, int y,allbutton *buttontab){
 }
 
 
-/**
- * \fn void menu(allbutton *buttontab, font * ftt)
- * \brief affiche le menu du jeu
- * 
- * \param buttontab pointeur sur structure allbutton
- * \param ftt contient des caractère afin de pouvoir écrire avec la sdl
- */
 void menu(allbutton *buttontab, font * ftt){
     int count = 1;
     SDL_Event event;
@@ -248,18 +195,6 @@ void menu(allbutton *buttontab, font * ftt){
 }
 
 
-/**
- * \fn void EventMouseButton(SDL_Event event, font *ftt, int *count, allbutton *buttontab, int *indexbtn, int *tmpindexbtn)
- * \brief gère les évenements liés à la souris sur les boutons
- * 
- * \param event evenement attrapé
- * \param ftt contient des caractère afin de pouvoir écrire avec la sdl
- * \param count entier permettant de sortir de la boucle
- * \param buttontab pointeur sur structure allbutton
- * \param indexbtn 
- * \param tmpindexbtn 
- * 
- */
 void EventMouseButton(SDL_Event event, font *ftt, int *count, allbutton *buttontab, int *indexbtn, int *tmpindexbtn){
     switch (event.type){
             case SDL_MOUSEMOTION:
@@ -291,14 +226,6 @@ void EventMouseButton(SDL_Event event, font *ftt, int *count, allbutton *buttont
 }
 
 
-/**
- * \fn void updatechar(char toupdate, int index)
- * \brief 
- * 
- * \param toupdate 
- * \param index 
- * 
- */
 void updatechar(char toupdate, int index){
     int y = index / N;
     int x = index - (y * N);
@@ -313,23 +240,11 @@ void updatechar(char toupdate, int index){
 }
 
 
-/**
- * \fn void dessine(char tabNiveau[])
- * \brief dessine le niveau à l'écran
- * 
- * \param tabNiveau tableau contenant le niveau 
- * 
- */
 void dessine(char tabNiveau[]){//ça sert à rien du coup
     SDL_Flip(ecran);
 }
 
 
-/**
- * \fn void freeImg()
- * \brief libère l'espace mémoire occupé par les images
- * 
- */
 void freeImg(){
     for(int i = 0; i<8; i++){
         SDL_FreeSurface(allimage[i].img);
@@ -337,18 +252,6 @@ void freeImg(){
 }
 
 
-/**
- * \fn void displayonebtn(button btn, SDL_Surface *ecran, font *ftt, int r, int g, int b)
- * \brief affiche un bouton
- * 
- * \param btn correspond à un bouton
- * \param ecran contient la fenetre sdl
- * \param ftt contient des caractère afin de pouvoir écrire avec la sdl
- * \param r indice de rouge
- * \param g indice de bleu 
- * \param b indice de vert
- * 
- */
 void displayonebtn(button btn, SDL_Surface *ecran, font *ftt, int r, int g, int b){
     SDL_Rect tmprect;
     SDL_FillRect(ecran, btn.rect, SDL_MapRGB(ecran->format,r,g,b));
@@ -358,15 +261,6 @@ void displayonebtn(button btn, SDL_Surface *ecran, font *ftt, int r, int g, int 
 }
 
 
-/**
- * \fn void displaybtn(allbutton *allb, SDL_Surface *ecran, font *ftt)
- * \brief affiche les boutons
- * 
- * \param allb contient le tableau avec tout les boutons
- * \param ecran contient la fenetre sdl
- * \param ftt contient des caractère afin de pouvoir écrire avec la sdl
- * 
- */
 void displaybtn(allbutton *allb, SDL_Surface *ecran, font *ftt){
     for(int i = 0; i < allb->len; i++){
          displayonebtn(allb->buttons[i], ecran, ftt,80,80,80);
@@ -374,13 +268,6 @@ void displaybtn(allbutton *allb, SDL_Surface *ecran, font *ftt){
 }
 
 
-/**
- * \fn void play(void* game)
- * \brief fonction du premier bouton qui lance les niveau un par un
- * 
- * \param g pointeur sur une structure Game
- * 
- */
 void play(void* game){
     printf("nothing\n");
     FILE *flot = fopen("niveau0", "r");
@@ -394,40 +281,16 @@ void play(void* game){
 }
 
 
-/**
- * \fn void selecLvl(void* nothing)
- * \brief lance l'écran de sélection des niveaux (not implemented)
- * 
- * 
- */
 void selecLvl(void* nothing){
     printf("ajkbfhksbhkfbz\n");
 }
 
 
-/**
- * \fn void loadlvl(void* game)
- * \brief fonction du troisième bouton qui lance le niveau sauvegardé dans le fichier sauv
- * 
- * \param g pointeur sur une structure Game
- * 
- */
 void loadlvl(void* game){
     load((Game*)game);
 }
 
 
-/**
- * \fn void initrect(SDL_Rect *rect, int x, int y, int w, int h)
- * \brief initialise les paramètre d'une structure SDL_Rect
- * 
- * \param rect structure SDL_Rect qu'on créer
- * \param x coordonnée x de rect
- * \param y coordonnée y de rect
- * \param w largeur de rect
- * \param h hauteur de rect
- * 
- */
 void initrect(SDL_Rect *rect, int x, int y, int w, int h){
     rect->x = x;
     rect->y = y;
@@ -436,11 +299,6 @@ void initrect(SDL_Rect *rect, int x, int y, int w, int h){
 }
 
 
-/**
- * \fn void graphic()
- * \brief fonction principale du fichier
- * 
- */
 void graphic(){
     Game game;
     initGame(&game, &updatechar, &dessine);
@@ -508,14 +366,6 @@ void graphic(){
 }
 
 
-/**
- * \fn int timer(int oldtime, int ms)
- * \brief fonction qui compte les secondes
- * 
- * \param oldtime 
- * \param ms 
- * 
- */
 int timer(int oldtime, int ms){
     int curenttime = SDL_GetTicks();
     if(curenttime - oldtime > ms){
