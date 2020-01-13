@@ -32,9 +32,8 @@ void boucleEv(Game *g, font* ftt){
     pos = g->posperso;
     SDL_Event event;
 
-    //display move and timer
-    char buftime[20]; 
-    char bufmove[10]; 
+    //display move and timer 
+    char buffer[30]; 
     SDL_Rect desttimer;
     desttimer.x = 10;
     desttimer.y = 10;
@@ -53,14 +52,12 @@ void boucleEv(Game *g, font* ftt){
             time += 1;
         }
         //dispaly move and timer
-        sprintf(buftime, "time : %d s", time);
-        displaystring(buftime, ecran, desttimer,ftt);
-        sprintf(bufmove, "%d", g->nbMove);
-        displaystring(bufmove, ecran, destmove,ftt);
+        sprintf(buffer, "time : %d s", time);
+        displaystring(buffer, ecran, desttimer,ftt);
+        sprintf(buffer, "%d", g->nbMove);
+        displaystring(buffer, ecran, destmove,ftt);
         SDL_UpdateRect(ecran, destmove.x, destmove.x, 100, 24);
         SDL_UpdateRect(ecran, desttimer.x, desttimer.x, 100, 24);
-        //dessine();
-        // fin display
 
         SDL_PollEvent(&event);
         switch(event.type){
@@ -75,25 +72,21 @@ void boucleEv(Game *g, font* ftt){
                     case SDLK_UP:
                         //y-1
                         movesoko(g,&pos,0,-1);
-                        //cont = win(g->tabNiveau);
                         break;
 
                     case SDLK_DOWN:
                         //y+1
                         movesoko(g,&pos,0,1);
-                        //cont = win(g->tabNiveau);
                         break;
 
                     case SDLK_LEFT:
                         //x-1
                         movesoko(g,&pos,-1,0);
-                        //cont = win(g->tabNiveau);
                         break;
 
                     case SDLK_RIGHT:
                         //x+1
                         movesoko(g,&pos,1,0);
-                        //cont = win(g->tabNiveau);
                         break;
 
                     case 'r':
@@ -126,15 +119,7 @@ void boucleEv(Game *g, font* ftt){
                 break;
         }
         if(g->badcaisse == 0){
-            g->clockEnd = clock();
-                g->extime = g->extime + (float) (g->clockEnd-g->clockStart)/CLOCKS_PER_SEC; //seconde
-                char bufscore[40];
-                sprintf(bufscore, "lvl : %d score : %d", g->curentlvl, score(g));
-                SDL_Rect posScore;
-                initrect(&posScore, 300,200, 100,24);
-                displaystring(bufscore, ecran, posScore, ftt);
-                SDL_Flip(ecran);
-                SDL_Delay(1000);
+            endLvl(g, ftt);
             if(g->curentlvl == 2){
                 cont = 0;
             }else{
@@ -142,9 +127,20 @@ void boucleEv(Game *g, font* ftt){
                 restart(g,g->curentlvl);
                 pos = g->posperso;
             }
-            
         }
     }
+}
+
+void endLvl(Game *g, font *ftt){
+    g->clockEnd = clock();
+    g->extime = g->extime + (float) (g->clockEnd-g->clockStart)/CLOCKS_PER_SEC; //seconde
+    char bufscore[40];
+    sprintf(bufscore, "lvl : %d score : %d", g->curentlvl, score(g));
+    SDL_Rect posScore;
+    initrect(&posScore, 300,200, 100,24);
+    displaystring(bufscore, ecran, posScore, ftt);
+    SDL_Flip(ecran);
+    SDL_Delay(1500);
 }
 
 void addbutton(allbutton *buttontab, SDL_Rect *rect, void(*callback)(void*), void* arg, char* strcontent){
@@ -283,6 +279,7 @@ void initrect(SDL_Rect *rect, int x, int y, int w, int h){
 void graphic(){
     Game game;
     initGame(&game, &updatechar, &dessine);
+
     //int font
     font *ftt;
     ftt = readfontinfo(220, "images/font.fnt","images/font_0.bmp");
@@ -322,18 +319,12 @@ void graphic(){
         fprintf(stderr, "Erreur VideoMode %s\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }
-    /*FILE *flot = fopen("niveau1", "r");
-    if(flot == NULL){
-        printf("pb ouverture fichier en lecture\n");
-        exit(1);
-    }*/
-    //printf("key repit : %d\n",SDL_EnableKeyRepeat(0, 0));
 
     menu(&allb, ftt);
+
     // Légende de la fenêtre
     SDL_WM_SetCaption("Sokoban", NULL);
-    //creationniveau(&game, flot);
-    //fclose(flot);
+
     //load(); //commenter la création du lvl pour l'utiliser
     
     SDL_Flip(ecran);
@@ -344,8 +335,10 @@ void graphic(){
     int superscore = score(&game);
     printf("time : %f\nnb Moves : %d, score : %d\n", game.extime, game.nbMove, superscore);
     freeImg();
+
     //free font
     freefont(ftt);
+
     SDL_Quit();
 }
 

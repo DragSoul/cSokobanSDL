@@ -48,6 +48,7 @@ void dsiplayonebtn(button btn, SDL_Surface *ecran, font *ftt, int r, int g, int 
 int timer(int oldtime, int ms);
 void EventMouseButton(SDL_Event event, font *ftt, int *count, allbutton *buttontab, int *indexbtn, int *tmpindexbtn);
 void initrect(SDL_Rect *rect, int x, int y, int w, int h);
+void endLvl(Game *g, font *ftt);
 
 //images utilisées
 charimg allimage[8];
