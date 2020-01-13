@@ -72,34 +72,30 @@ void dessineshell(char tabNiveau[]){
 
 void boucleshell(Game *g){
     int cont = 1;
-    point pos;
-    pos = g->posperso;
     int ch;
     while((ch = getch()) != 'q')
     {
         switch(ch)
         {
             case KEY_UP: 
-                movesoko(g,&pos,0,-1);
-                cont = win(g->tabNiveau);
+                movesoko(g,0,-1);
                 break;
             case KEY_DOWN: 
-                movesoko(g,&pos,0,1);
-                cont = win(g->tabNiveau);
+                movesoko(g,0,1);
                 break;
             case KEY_LEFT: 
-                movesoko(g,&pos,-1,0);
-                cont = win(g->tabNiveau);
+                movesoko(g,-1,0);
                 break;
             case KEY_RIGHT: 
-                movesoko(g,&pos,1,0);
-                cont = win(g->tabNiveau);
+                movesoko(g,1,0);
                 break;
             case 'r':
                 //restart level
                 restart(g,1);
-                pos = g->posperso;
                 break;
+        }
+        if(g->badcaisse == 0){
+            cont = 0;
         }
         if(cont == 0){
             break;

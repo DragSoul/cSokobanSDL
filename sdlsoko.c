@@ -28,8 +28,6 @@ void loadImg(){
 void boucleEv(Game *g, font* ftt){
     
     int cont = 1;
-    point pos;
-    pos = g->posperso;
     SDL_Event event;
 
     //display move and timer 
@@ -71,28 +69,27 @@ void boucleEv(Game *g, font* ftt){
                 switch(event.key.keysym.sym){
                     case SDLK_UP:
                         //y-1
-                        movesoko(g,&pos,0,-1);
+                        movesoko(g,0,-1);
                         break;
 
                     case SDLK_DOWN:
                         //y+1
-                        movesoko(g,&pos,0,1);
+                        movesoko(g,0,1);
                         break;
 
                     case SDLK_LEFT:
                         //x-1
-                        movesoko(g,&pos,-1,0);
+                        movesoko(g,-1,0);
                         break;
 
                     case SDLK_RIGHT:
                         //x+1
-                        movesoko(g,&pos,1,0);
+                        movesoko(g,1,0);
                         break;
 
                     case 'r':
                         //restart level
                         restart(g,g->curentlvl);
-                        pos = g->posperso;
                         break;
 
                     //affiche tab (debug)
@@ -125,7 +122,6 @@ void boucleEv(Game *g, font* ftt){
             }else{
                 g->curentlvl +=1;
                 restart(g,g->curentlvl);
-                pos = g->posperso;
             }
         }
     }

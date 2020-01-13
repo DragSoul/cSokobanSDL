@@ -105,9 +105,9 @@ int canMoveCaisse(char tabNiveau[], int indexmove2){
     return tabNiveau[indexmove2] != MUR && tabNiveau[indexmove2] != CAISSE && tabNiveau[indexmove2] != CAISSECIBLE;
 }
 
-void movesoko(Game *g, point *pos, int x, int y){
-    int indexmove1 = ((pos->y)+y)*N + (pos->x)+x;
-    int indexmove2 = ((pos->y)+(2*y))*N + (pos->x)+(2*x);
+void movesoko(Game *g, int x, int y){
+    int indexmove1 = ((g->posperso.y)+y)*N + (g->posperso.x)+x;
+    int indexmove2 = ((g->posperso.y)+(2*y))*N + (g->posperso.x)+(2*x);
     switch(g->tabNiveau[indexmove1]){
         //mur
         case MUR:
@@ -117,7 +117,7 @@ void movesoko(Game *g, point *pos, int x, int y){
             if(canMoveCaisse(g->tabNiveau, indexmove2)){
                 //move caisse
                 movecaisse(g, indexmove2, x, y);
-                moveperso(g, pos,x,y,PERS);
+                moveperso(g,x,y,PERS);
             }
             break;
         //caisse2
@@ -125,24 +125,24 @@ void movesoko(Game *g, point *pos, int x, int y){
             if(canMoveCaisse(g->tabNiveau, indexmove2)){
                 movecaisse(g, indexmove2,x,y);
                 g->badcaisse +=1;
-                moveperso(g,pos,x,y,PERSCIBLE);
+                moveperso(g,x,y,PERSCIBLE);
             }
             break;
         //dest
         case SOLCIBLE:
-            moveperso(g, pos,x,y,PERSCIBLE);
+            moveperso(g,x,y,PERSCIBLE);
             break;
 
         case SOL:
-            moveperso(g, pos,x,y,PERS);
+            moveperso(g,x,y,PERS);
             break;
     }
 }
 
-void moveperso(Game *g, point *pos, int x, int y, char movenext){
+void moveperso(Game *g, int x, int y, char movenext){
     g->nbMove += 1;
-    int curentindex = (pos->y)*N + (pos->x);
-    int indexmove1 = ((pos->y)+y)*N + (pos->x)+x;
+    int curentindex = (g->posperso.y)*N + (g->posperso.x);
+    int indexmove1 = ((g->posperso.y)+y)*N + (g->posperso.x)+x;
     if(g->tabNiveau[curentindex] == PERSCIBLE){
         g->tabNiveau[curentindex] = SOLCIBLE;
         callGameUpdateChar(g, SOLCIBLE, curentindex);
@@ -152,8 +152,8 @@ void moveperso(Game *g, point *pos, int x, int y, char movenext){
         callGameUpdateChar(g, SOL, curentindex);
     }
     g->tabNiveau[indexmove1] = movenext;
-    pos->x += x;
-    pos->y += y;
+    g->posperso.x += x;
+    g->posperso.y += y;
     if(g->updatecharfunc != NULL){
         callGameUpdateChar(g, movenext, indexmove1);
     }

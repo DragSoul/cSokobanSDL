@@ -19,10 +19,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <SDL/SDL.h>
-#include <pthread.h>
-#include <SDL/SDL_types.h>
-#include <SDL/SDL_timer.h>
+
 
 
 typedef struct{
@@ -33,7 +30,7 @@ typedef struct{
 typedef struct
 {
     point posperso;
-    clock_t clockStart, clockEnd; //waitEvent nous gène, utiliser PollEvent ou faire un thread ?
+    clock_t clockStart, clockEnd;
     char *tabNiveau;
     float extime;
     int nbMove;
@@ -48,8 +45,8 @@ void save();
 void load();
 int canMoveCaisse(char tabNiveau[], int indexmove2);
 void movecaisse(Game *g, int indexmove2, int x, int y);
-void movesoko(Game *g, point *pos, int x, int y);
-void moveperso(Game *g, point *pos, int x, int y, char movenext);
+void movesoko(Game *g, int x, int y);
+void moveperso(Game *g, int x, int y, char movenext);
 void restart(Game *g, int lv);
 int contient(char tab[], int n, char c);
 int win(char tabNiveau[]);
