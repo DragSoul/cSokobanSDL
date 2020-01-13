@@ -236,10 +236,6 @@ void freeImg(){
     }
 }
 
-void printnth(void* nothing){
-    printf("nothing\n");
-}
-
 void dsiplayonebtn(button btn, SDL_Surface *ecran, font *ftt, int r, int g, int b){
     SDL_Rect tmprect;
     SDL_FillRect(ecran, btn.rect, SDL_MapRGB(ecran->format,r,g,b));
@@ -267,6 +263,10 @@ void play(void* game){
 
 void selecLvl(void* nothing){
     printf("ajkbfhksbhkfbz\n");
+}
+
+void loadlvl(void* game){
+    load((Game*)game);
 }
 
 void initrect(SDL_Rect *rect, int x, int y, int w, int h){
@@ -305,7 +305,7 @@ void graphic(){
     //add btn to allb
     addbutton(&allb, &rectbtnPlay, &play, (void*)&game, "Play");
     addbutton(&allb, &rectbtnSelec, &selecLvl, NULL, "Level");
-    addbutton(&allb, &rectbtnCharge, &load, NULL, "Load");
+    addbutton(&allb, &rectbtnCharge, &loadlvl, (void*)&game, "Load");
 
     loadImg();
     srand(time(NULL));
