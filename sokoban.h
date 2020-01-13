@@ -30,32 +30,32 @@ typedef struct{
     int y;
 }point;
 
-void creationniveau(FILE *flot);
+typedef struct
+{
+    point posperso;
+    clock_t clockStart, clockEnd; //waitEvent nous gène, utiliser PollEvent ou faire un thread ?
+    char *tabNiveau;
+    float extime;
+    int nbMove;
+    void (*updatecharfunc)(char,int);
+    void (*updatescreen)(char*);
+}Game;
+
+void creationniveau(Game *g, FILE *flot);
 void save();
 void load();
-int canMoveCaisse(int indexmove2);
-void movecaisse(int indexmove2, int x, int y);
-void movesoko(point *pos, int x, int y);
-void moveperso(point *pos, int x, int y, char movenext);
-void restart(int lv);
+int canMoveCaisse(char tabNiveau[], int indexmove2);
+void movecaisse(Game *g, int indexmove2, int x, int y);
+void movesoko(Game *g, point *pos, int x, int y);
+void moveperso(Game *g, point *pos, int x, int y, char movenext);
+void restart(Game *g, int lv);
 int contient(char tab[], int n, char c);
-int win();
+int win(char tabNiveau[]);
 void affichetab(char tab[]);
+void createtablvl(Game *g, int n);
 
-void setupdatecharfunc(void(*func)(char,int));
-void createtablvl(int n);
-void (*updatecharfunc)(char,int);
-void (*updatescreen)(void);
-void setupdatescreenfunc(void (*update)(void));
-void setposperso(point pos);
-point getposperso();
-void setupdatescreenfunc(void (*update)(void));
 
-point posperso;
-clock_t clockStart, clockEnd; //waitEvent nous gène, utiliser PollEvent ou faire un thread ?
-char *tabNiveau;
-float extime;
-int nbMove;
+
 
 #endif
 

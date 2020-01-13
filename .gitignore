@@ -53,3 +53,9 @@ dkms.conf
 sokoban
 .vscode/settings.json
 sauv
+cmake-build-debug/
+cmake-build-debug-wsl/cmake_install.cmake
+cmake-build-debug-wsl/
+cmake-build-default-wsl/
+.idea/
+CMakeLists.txt

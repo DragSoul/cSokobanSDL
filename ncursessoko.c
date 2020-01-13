@@ -54,7 +54,7 @@ void initcolors(){
     init_pair(9, COLOR_CYAN, COLOR_BLACK);
 }
 
-void dessineshell(){
+void dessineshell(char tabNiveau[]){
     clear();
     for(int i = 0; i < 11; i++){
         for(int j = 0; j < 10; j++){
@@ -70,35 +70,35 @@ void dessineshell(){
     }
 }
 
-void boucleshell(){
+void boucleshell(Game *g){
     int cont = 1;
     point pos;
-    pos = getposperso();
+    pos = g->posperso;
     int ch;
     while((ch = getch()) != 'q')
     {
         switch(ch)
         {
             case KEY_UP: 
-                movesoko(&pos,0,-1);
-                cont = win();
+                movesoko(g,&pos,0,-1);
+                cont = win(g->tabNiveau);
                 break;
             case KEY_DOWN: 
-                movesoko(&pos,0,1);
-                cont = win();
+                movesoko(g,&pos,0,1);
+                cont = win(g->tabNiveau);
                 break;
             case KEY_LEFT: 
-                movesoko(&pos,-1,0);
-                cont = win();
+                movesoko(g,&pos,-1,0);
+                cont = win(g->tabNiveau);
                 break;
             case KEY_RIGHT: 
-                movesoko(&pos,1,0);
-                cont = win();
+                movesoko(g,&pos,1,0);
+                cont = win(g->tabNiveau);
                 break;
             case 'r':
                 //restart level
-                restart(1);
-                pos = getposperso();
+                restart(g,1);
+                pos = g->posperso;
                 break;
         }
         if(cont == 0){
@@ -116,11 +116,14 @@ void console(){
     start_color();
     initcolors();
 
-    setupdatecharfunc(&updateshell);
-    setupdatescreenfunc(&dessineshell);
+    Game game;
+    game.extime = 0;
+
+    game.updatecharfunc = &updateshell;
+    game.updatescreen = &dessineshell;
 
     srand(time(NULL));
-    createtablvl(110);
+    createtablvl(&game, 110);
 
     FILE *flot = fopen("niveau1", "r");
     if(flot == NULL){
@@ -128,14 +131,14 @@ void console(){
         exit(1);
     }
 
-    creationniveau(flot);
+    creationniveau(&game, flot);
     fclose(flot);
-
-    clockStart = clock();
-    boucleshell();
-    clockEnd = clock();
-    extime = extime + (float) (clockEnd-clockStart)/CLOCKS_PER_SEC; //seconde
-    printw("time : %f\nnb Moves : %d\n", extime, nbMove);
+    printf("coucou\n");
+    game.clockStart = clock();
+    boucleshell(&game);
+    game.clockEnd = clock();
+    game.extime = game.extime + (float) (game.clockEnd-game.clockStart)/CLOCKS_PER_SEC; //seconde
+    printw("time : %f\nnb Moves : %d\n", game.extime, game.nbMove);
     refresh();
     getch();
     endwin();

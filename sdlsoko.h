@@ -35,7 +35,7 @@ typedef struct
 }charimg;
 
 void loadImg();
-void boucleEv(font *ftt);
+void boucleEv(Game *g, font* ftt);
 void updatechar(char toupdate, int index);
 void dessine();
 void freeImg();
