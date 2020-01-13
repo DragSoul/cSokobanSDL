@@ -1,9 +1,37 @@
+/**
+ * \file sokoban.c
+ * \author Aurelien DOUARD, Anthony Bertrand
+ * \brief fichier contenant les fonctions du sokoban
+ * \version 0.1
+ * \date 13 janvier 2020
+ *
+ * fichier contenant les fonctions du sokoban
+ *
+ */
+
 #include "sokoban.h"
 
+
+/**
+ * \fn void createtablvl(Game *g, int n)
+ * \brief Fonction de création d'un tableau qui contiendra le niveau
+ *
+ * \param g pointeur sur une structure Game.
+ * \param n taille du tableau.
+ */
 void createtablvl(Game *g, int n){
     g->tabNiveau = malloc(sizeof(char)*(n));
 }
 
+
+/**
+ * \fn void initGame(Game *g, void (*updatecharfunc)(char,int), void (*updatescreen)(char*))
+ * \brief Fonction qui initialise tout les élements de la structure Game
+ *
+ * \param g Pointeur sur une structure Game
+ * \param updatecharfunc Pointeur sur une fonction de mise à jour de caractère.
+ * \param updatescreen Pointeur sur une fonction de mise à jour d'écran.
+ */
 void initGame(Game *g, void (*updatecharfunc)(char,int), void (*updatescreen)(char*)){
     g->nbMove = 0;
     g->extime = 0;

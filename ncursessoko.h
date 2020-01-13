@@ -1,3 +1,14 @@
+/**
+ * \file ncursessoko.h
+ * \author Aurelien DOUARD, Anthony Bertrand
+ * \brief fichier contenant le prototype des fonctions du sokoban (jouable dans la console)
+ * \version 0.1
+ * \date 13 janvier 2020
+ *
+ * fichier contenant le prototype des fonctions du sokoban (jouable dans la console)
+ *
+ */
+
 #ifndef NCSOKO_H
 #define NCSOKO_H
 

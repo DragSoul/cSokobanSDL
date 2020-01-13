@@ -1,5 +1,15 @@
-#include "sdlsoko.h"
+/**
+ * \file sdlsoko.c
+ * \author Aurelien DOUARD, Anthony Bertrand
+ * \brief fichier contenant les fonctions utilisées pour jouer au sokoban dans une fenêtre sdl
+ * \version 0.1
+ * \date 13 janvier 2020
+ *
+ * fichier contenant les fonctions utilisées pour jouer au sokoban dans une fenêtre sdl
+ *
+ */
 
+#include "sdlsoko.h"
 
 void addallimg(int * index, char car, SDL_Surface *imgrect){
     if(imgrect == NULL){

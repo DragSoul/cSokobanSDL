@@ -1,3 +1,14 @@
+/**
+ * \file sdlsoko.h
+ * \author Aurelien DOUARD, Anthony Bertrand
+ * \brief fichier contenant le prototype des fonctions du sokoban (partie graphique)
+ * \version 0.1
+ * \date 13 janvier 2020
+ *
+ * fichier contenant le prototype des fonctions du sokoban (partie graphique)
+ *
+ */
+
 #ifndef SDLD_H
 #define SDLD_H
 

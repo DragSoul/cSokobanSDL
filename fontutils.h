@@ -1,3 +1,14 @@
+/**
+ * \file fontutils.h
+ * \author Aurelien DOUARD, Anthony Bertrand
+ * \brief fichier contenant le prototype des fonctions de lecture/écriture en sdl
+ * \version 0.1
+ * \date 13 janvier 2020
+ *
+ * fichier contenant le prototype des fonctions de lecture/écriture en sdl
+ *
+ */
+
 #ifndef FTU_h
 #define FTU_H
 
