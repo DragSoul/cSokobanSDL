@@ -236,7 +236,7 @@ void updatechar(char toupdate, int index){
     }
 }
 
-void dessine(char tabNiveau[]){//ça sert à rien du coup
+void dessine(char tabNiveau[]){
     SDL_Flip(ecran);
 }
 
