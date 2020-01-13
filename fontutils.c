@@ -1,3 +1,14 @@
+/**
+ * \file fontutils.c
+ * \author Aurelien DOUARD, Anthony Bertrand
+ * \brief Programme nécessaire à l'affichage de texte en sdl
+ * \version 0.1
+ * \date 13 janvier 2020
+ *
+ * Programme nécessaire à l'affichage de texte en sdl
+ *
+ */
+
 #include "fontutils.h"
 #include <string.h>
 

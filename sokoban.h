@@ -1,3 +1,14 @@
+/**
+ * \file sokoban.h
+ * \author Aurelien DOUARD, Anthony Bertrand
+ * \brief fichier contenant le prototype des fonctions du sokoban (partie logique)
+ * \version 0.1
+ * \date 13 janvier 2020
+ *
+ * fichier contenant le prototype des fonctions du sokoban (partie logique)
+ *
+ */
+
 #ifndef SOKO_H
 #define SOKO_H
 

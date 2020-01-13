@@ -1,3 +1,14 @@
+/**
+ * \file ncursessoko.c
+ * \author Aurelien DOUARD, Anthony Bertrand
+ * \brief fichier contenant les fonctions utilisées pour jouer au sokoban dans la console
+ * \version 0.1
+ * \date 13 janvier 2020
+ *
+ * fichier contenant les fonctions utilisées pour jouer au sokoban dans la console
+ *
+ */
+
 #include "ncursessoko.h"
 
 void updateshell(char toudate, int index){

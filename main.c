@@ -1,9 +1,15 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "sdlsoko.h"
-#include "ncursessoko.h"
+/**
+ * \file main.c
+ * \author Aurelien DOUARD, Anthony Bertrand
+ * \brief fichier contenant la fonction main()
+ * \version 0.1
+ * \date 13 janvier 2020
+ *
+ * fichier contenant la fonction main()
+ *
+ */
+
 #include "main.h"
-#include <string.h>
 
 int main(int argc, char ** argv){
     if(argc == 1){
