@@ -64,9 +64,7 @@ void boucleEv(Game *g, font* ftt){
         displaystring(buffer, ecran, desttimer,ftt);
         sprintf(buffer, "%d", g->nbMove);
         displaystring(buffer, ecran, destmove,ftt);
-        SDL_UpdateRect(ecran, destmove.x, destmove.x, 100, 24);
-        SDL_UpdateRect(ecran, desttimer.x, desttimer.x, 100, 24);
-
+        callGameUpdateScreen(g);
         SDL_PollEvent(&event);
         switch(event.type){
             case SDL_QUIT:
@@ -126,6 +124,8 @@ void boucleEv(Game *g, font* ftt){
                 break;
         }
         if(g->badcaisse == 0){
+            sprintf(buffer, "%d", g->nbMove);
+            displaystring(buffer, ecran, destmove,ftt);
             endLvl(g, ftt);
             time = 0;
             if(g->curentlvl == 2){
@@ -307,9 +307,9 @@ void selecLvl(void* ftt){
         ft[i].lvl = i;
     }
 
-    addbutton(&allb, &rectbtnPlay0, &playlvl, (void*)&ft[0], "Play 0");
-    addbutton(&allb, &rectbtnPlay1, &playlvl, (void*)&ft[1], "Play 1");
-    addbutton(&allb, &rectbtnPlay2, &playlvl, (void*)&ft[2], "Play 2");
+    addbutton(&allb, &rectbtnPlay0, &playlvl, (void*)&ft[0], "lvl 0");
+    addbutton(&allb, &rectbtnPlay1, &playlvl, (void*)&ft[1], "lvl 1");
+    addbutton(&allb, &rectbtnPlay2, &playlvl, (void*)&ft[2], "lvl 2");
 
     int count = 1;
     SDL_Event event;

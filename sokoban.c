@@ -158,7 +158,6 @@ void movesoko(Game *g, int x, int y){
 
 
 void moveperso(Game *g, int x, int y, char movenext){
-
     g->nbMove += 1;
     int curentindex = (g->posperso.y)*N + (g->posperso.x);
     int indexmove1 = ((g->posperso.y)+y)*N + (g->posperso.x)+x;
@@ -173,12 +172,8 @@ void moveperso(Game *g, int x, int y, char movenext){
     g->tabNiveau[indexmove1] = movenext;
     g->posperso.x += x;
     g->posperso.y += y;
-    if(g->updatecharfunc != NULL){
-        callGameUpdateChar(g, movenext, indexmove1);
-    }
-    if(g->updatescreen != NULL){
-        callGameUpdateScreen(g);
-    }
+    callGameUpdateChar(g, movenext, indexmove1);
+    callGameUpdateScreen(g);
 }
 
 
@@ -195,15 +190,6 @@ void callGameUpdateChar(Game *g, char movenext, int indexmove1){
     }
 }
 
-
-int win(char tabNiveau[]){
-    for(int i = 0; i < 110; i++){
-        if(tabNiveau[i] == CAISSE){
-            return 1;
-        } 
-    }
-    return 0;
-}
 
 
 void affichetab(char tab[]){
