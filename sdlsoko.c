@@ -107,7 +107,7 @@ void boucleEv(Game *g, font* ftt){
                         break;
 
                     case 's':
-                        save();
+                        save(g);
                         break;
 
                     case 'q':
